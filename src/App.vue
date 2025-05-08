@@ -2,19 +2,13 @@
   <div class="app-container">
     <SideBar :isOpen="sidebarOpen" @toggle="toggleSidebar" />
     <div class="main-content" :class="{ 'sidebar-open': sidebarOpen }">
-      <!-- TopNavBar는 components에서 주석 처리되어 있으므로 여기서도 제거하거나 주석 처리 -->
-      <!-- <TopNavBar @toggle-sidebar="toggleSidebar" :userName="userName" /> -->
-      
-      <!-- Dashboard 대신 router-view 사용 -->
       <router-view />
     </div>
-    <FloatingChatButton @click="openChatbot" />
   </div>
 </template>
 
 <script>
 import SideBar from './components/SideBar.vue';
-// import TopNavBar from './components/TopNavBar.vue'; // 주석 처리되어 있음
 
 export default {
   name: 'App',

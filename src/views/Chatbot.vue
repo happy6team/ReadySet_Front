@@ -1,443 +1,458 @@
 <template>
-    <div class="chatbot-container">
-      <!-- 채팅 사이드바 (대화 기록) -->
-      <div class="chat-sidebar" :class="{ 'sidebar-open': sidebarOpen }">
-        <div class="sidebar-header">
-          <h3>대화 기록</h3>
-          <button class="sidebar-close-btn" @click="toggleSidebar">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-            </svg>
-          </button>
+  <div class="chatbot-container">
+    <!-- 채팅 사이드바 (대화 기록) -->
+    <div class="chat-sidebar" :class="{ 'sidebar-open': sidebarOpen }">
+      <div class="sidebar-header">
+        <h3>대화 기록</h3>
+        <button class="sidebar-close-btn" @click="toggleSidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+          </svg>
+        </button>
+      </div>
+      
+      <div class="chat-history-list">
+        <div v-if="chatHistories.length === 0" class="empty-history">
+          <p>아직 저장된 대화가 없습니다.</p>
         </div>
-        
-        <div class="chat-history-list">
-          <div v-if="chatHistories.length === 0" class="empty-history">
-            <p>아직 저장된 대화가 없습니다.</p>
+        <div 
+          v-for="(history, index) in chatHistories" 
+          :key="index" 
+          class="history-item"
+          :class="{ 'active': currentHistoryIndex === index }"
+          @click="loadChatHistory(index)"
+        >
+          <div class="history-item-header">
+            <span class="history-title">{{ history.title }}</span>
+            <span class="history-date">{{ formatDate(history.date) }}</span>
           </div>
-          <div 
-            v-for="(history, index) in chatHistories" 
-            :key="index" 
-            class="history-item"
-            :class="{ 'active': currentHistoryIndex === index }"
-            @click="loadChatHistory(index)"
-          >
-            <div class="history-item-header">
-              <span class="history-title">{{ history.title }}</span>
-              <span class="history-date">{{ formatDate(history.date) }}</span>
-            </div>
-            <p class="history-preview">{{ history.preview }}</p>
-          </div>
-        </div>
-        
-        <div class="sidebar-actions">
-          <button class="new-chat-btn" @click="startNewChat">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-              <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-            </svg>
-            새 대화 시작하기
-          </button>
+          <p class="history-preview">{{ history.preview }}</p>
         </div>
       </div>
       
-      <!-- 챗봇 메인 컨테이너 -->
-      <div class="chatbot-main-container">
-        <!-- 챗봇 헤더 -->
-        <div class="chatbot-header">
-          <div class="header-left">
-            <button class="sidebar-toggle" @click="toggleSidebar">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                <path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          
-          <div class="header-content">
-            <div class="header-title-wrapper">
-              <h2>AI 챗봇 어시스턴트</h2>
-            </div>
-            <p>프로젝트 관련 질문이나 도움이 필요한 내용을 물어보세요. AI가 즉시 답변해 드립니다.</p>
-          </div>
-          
-          <div class="header-decoration">
-            <div class="decoration-circle circle-1"></div>
-            <div class="decoration-circle circle-2"></div>
-            <div class="decoration-circle circle-3"></div>
-          </div>
+      <div class="sidebar-actions">
+        <button class="new-chat-btn" @click="startNewChat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+          </svg>
+          새 대화 시작하기
+        </button>
+      </div>
+    </div>
+    
+    <!-- 챗봇 메인 컨테이너 -->
+    <div class="chatbot-main-container">
+      <!-- 챗봇 헤더 -->
+      <div class="chatbot-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" @click="toggleSidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
         </div>
         
-        <!-- 메인 채팅 영역 -->
-        <div class="chat-main">
-          <div class="chat-messages" ref="chatMessages">
-            <!-- 빈 채팅일 때 표시 -->
-            <div v-if="messages.length === 0" class="empty-chat">
-              <div class="empty-illustration">
-                <svg xmlns="http://www.w3.org/2000/svg" class="robot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="10" rx="2" />
-                  <circle cx="12" cy="5" r="2" />
-                  <path d="M12 7v4" />
-                  <line x1="8" y1="16" x2="8" y2="16" />
-                  <line x1="16" y1="16" x2="16" y2="16" />
-                </svg>
-              </div>
-              <h3>AI 챗봇에게 질문해보세요</h3>
-              <p>프로젝트 관련 질문, 코드 검증, 문서 검색 등 다양한 도움을 받을 수 있습니다.</p>
-              <div class="suggestion-chips">
-                <button class="chip" @click="applyQuestion('프로젝트 구조를 설명해줘')">
-                  <span class="chip-icon">📂</span>
-                  프로젝트 구조를 설명해줘
-                </button>
-                <button class="chip" @click="applyQuestion('API 연동은 어떻게 하나요?')">
-                  <span class="chip-icon">🔌</span>
-                  API 연동은 어떻게 하나요?
-                </button>
-                <button class="chip" @click="applyQuestion('이 코드를 최적화해줄래?')">
-                  <span class="chip-icon">⚙️</span>
-                  이 코드를 최적화해줄래?
-                </button>
-                <button class="chip" @click="applyQuestion('데이터 구조 설계 조언이 필요해')">
-                  <span class="chip-icon">📊</span>
-                  데이터 구조 설계 조언이 필요해
-                </button>
-              </div>
+        <div class="header-content">
+          <div class="header-title-wrapper">
+            <h2>AI 챗봇 어시스턴트</h2>
+          </div>
+          <p>프로젝트 관련 질문이나 도움이 필요한 내용을 물어보세요. AI가 즉시 답변해 드립니다.</p>
+        </div>
+        
+        <div class="header-decoration">
+          <div class="decoration-circle circle-1"></div>
+          <div class="decoration-circle circle-2"></div>
+          <div class="decoration-circle circle-3"></div>
+        </div>
+      </div>
+      
+      <!-- 메인 채팅 영역 -->
+      <div class="chat-main">
+        <div class="chat-messages" ref="chatMessages">
+          <!-- 빈 채팅일 때 표시 -->
+          <div v-if="messages.length === 0" class="empty-chat">
+            <div class="empty-illustration">
+              <svg xmlns="http://www.w3.org/2000/svg" class="robot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <circle cx="12" cy="5" r="2" />
+                <path d="M12 7v4" />
+                <line x1="8" y1="16" x2="8" y2="16" />
+                <line x1="16" y1="16" x2="16" y2="16" />
+              </svg>
             </div>
-            
-            <!-- 메시지 표시 영역 -->
-            <template v-else>
-              <div 
-                v-for="(message, index) in messages" 
-                :key="index" 
-                class="message"
-                :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
-              >
-                <div class="message-avatar">
-                  <div class="avatar-image" :class="{ 'user-avatar': message.isUser, 'bot-avatar': !message.isUser }">
-                    <span v-if="message.isUser">{{ userInitial }}</span>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                      <path d="M16.5 7.5h-9v9h9v-9z" />
-                      <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-                <div class="message-content">
-                  <div class="message-header">
-                    <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
-                    <span class="message-time">{{ formatTime(message.time) }}</span>
-                  </div>
-                  <div class="message-text" v-html="formatMessage(message.text)"></div>
-                  <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
-                    <span class="sources-label">출처:</span>
-                    <div class="source-list">
-                      <a 
-                        v-for="(source, sourceIndex) in message.sources" 
-                        :key="sourceIndex" 
-                        :href="source.url" 
-                        target="_blank" 
-                        class="source-item"
-                      >
-                        {{ source.title }}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
+            <h3>AI 챗봇에게 질문해보세요</h3>
+            <p>프로젝트 관련 질문, 코드 검증, 문서 검색 등 다양한 도움을 받을 수 있습니다.</p>
+            <div class="suggestion-chips">
+              <button class="chip" @click="applyQuestion('프로젝트 구조를 설명해줘')">
+                <span class="chip-icon">📂</span>
+                프로젝트 구조를 설명해줘
+              </button>
+              <button class="chip" @click="applyQuestion('API 연동은 어떻게 하나요?')">
+                <span class="chip-icon">🔌</span>
+                API 연동은 어떻게 하나요?
+              </button>
+              <button class="chip" @click="applyQuestion('이 코드를 최적화해줄래?')">
+                <span class="chip-icon">⚙️</span>
+                이 코드를 최적화해줄래?
+              </button>
+              <button class="chip" @click="applyQuestion('데이터 구조 설계 조언이 필요해')">
+                <span class="chip-icon">📊</span>
+                데이터 구조 설계 조언이 필요해
+              </button>
+            </div>
           </div>
           
-          <!-- 입력 영역 -->
-          <div class="chat-input-container">
-            <div class="input-wrapper">
-              <textarea 
-                v-model="userInput" 
-                class="chat-input" 
-                placeholder="메시지를 입력하세요..."
-                @keydown.enter.prevent="sendMessage"
-                ref="chatInput"
-                rows="1"
-              ></textarea>
+          <!-- 메시지 표시 영역 -->
+          <template v-else>
+            <div 
+              v-for="(message, index) in messages" 
+              :key="index" 
+              class="message"
+              :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
+            >
+              <div class="message-avatar">
+                <div class="avatar-image" :class="{ 'user-avatar': message.isUser, 'bot-avatar': !message.isUser }">
+                  <span v-if="message.isUser">{{ userInitial }}</span>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path d="M16.5 7.5h-9v9h9v-9z" />
+                    <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
+                  <span class="message-time">{{ formatTime(message.time) }}</span>
+                </div>
+                <div class="message-text" v-html="formatMessage(message.text)"></div>
+                <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
+                  <span class="sources-label">출처:</span>
+                  <div class="source-list">
+                    <a 
+                      v-for="(source, sourceIndex) in message.sources" 
+                      :key="sourceIndex" 
+                      :href="source.url" 
+                      target="_blank" 
+                      class="source-item"
+                    >
+                      {{ source.title }}
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <button 
-              class="send-btn" 
-              :class="{ 'active': userInput.trim().length > 0 }" 
-              @click="sendMessage"
-              :disabled="userInput.trim().length === 0">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
-              </svg>
-            </button>
+          </template>
+        </div>
+        
+        <!-- 입력 영역 -->
+        <div class="chat-input-container">
+          <div class="input-wrapper">
+            <textarea 
+              v-model="userInput" 
+              class="chat-input" 
+              placeholder="메시지를 입력하세요..."
+              @keyup.enter.prevent="sendMessage"
+              ref="chatInput"
+              rows="1"
+            ></textarea>
           </div>
+          <button 
+            class="send-btn" 
+            :class="{ 'active': userInput.trim().length > 0 }" 
+            @click="sendMessage"
+            :disabled="userInput.trim().length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
     
-  <script>
-  import axios from 'axios'
+<script setup>
+import { ref, nextTick, onMounted, watch } from 'vue';
+import { sendChatMessage, getChatHistories } from '@/services/api';
 
-  export default {
-    name: 'ChatbotView',
-    data() {
-      return {
-        userInput: '',
-        messages: [],
-        userName: '김신입',
-        userInitial: '김',
-        sidebarOpen: false,
-        currentHistoryIndex: -1,
-        chatHistories: []
-      }
-    },
-    methods: {
-      toggleSidebar() {
-        this.sidebarOpen = !this.sidebarOpen;
 
-        if (this.sidebarOpen) {
-          this.fetchChatHistoriesFromServer();
-        }
-      },
+// 반응형 상태 정의
+const userInput = ref('');
+const messages = ref([]);
+const userName = ref('김신입');
+const userInitial = ref(userName.value[0] || '김');
+const sidebarOpen = ref(false);
+const currentHistoryIndex = ref(-1);
+const chatHistories = ref([]);
+const isLoading = ref(false);
 
-      sendMessage() {
-        if (this.userInput.trim() === '') return;
-        
-        // 사용자 메시지 추가
-        this.messages.push({
-          isUser: true,
-          text: this.userInput,
-          time: new Date()
-        });
-        
-        const userQuestion = this.userInput;
-        this.userInput = '';
-        
-        // 입력창 높이 초기화
-        this.$nextTick(() => {
-          this.$refs.chatInput.style.height = 'auto';
-        });
-        
-        // AI 응답 시뮬레이션 (실제로는 API 호출)
-        setTimeout(() => {
-          let response = "죄송합니다만, 현재 해당 질문에 대한 답변을 준비 중입니다. 잠시 후 다시 시도해주세요.";
-          let sources = [];
-          
-          // 샘플 응답 (실제로는 서버에서 받아옴)
-          if (userQuestion.includes('프로젝트 구조')) {
-            response = "본 프로젝트는 Vue.js 기반의 프론트엔드와 Node.js 백엔드로 구성되어 있습니다.<br><br>주요 구조는 다음과 같습니다:<br>- <code>components/</code>: 재사용 가능한 UI 컴포넌트<br>- <code>views/</code>: 페이지 컴포넌트<br>- <code>services/</code>: API 연동 및 비즈니스 로직<br>- <code>store/</code>: Vuex 상태 관리<br><br>CI/CD 파이프라인은 GitHub Actions를 통해 자동화되어 있으며, 테스트 후 AWS에 자동 배포됩니다.";
-            sources = [
-              { title: '프로젝트 구조 문서', url: '#' },
-              { title: '개발 가이드라인', url: '#' }
-            ];
-          } else if (userQuestion.includes('API')) {
-            response = "API 연동은 <code>axios</code> 라이브러리를 사용합니다. <code>/services/api.js</code> 파일에 기본 설정이 있으며, 인증 토큰은 자동으로 처리됩니다.<br><br>예시 코드:<br><pre><code>import api from '@/services/api';\n\nasync function fetchData() {\n  try {\n    const response = await api.get('/endpoint');\n    return response.data;\n  } catch (error) {\n    console.error('API 오류:', error);\n  }\n}</code></pre>";
-            sources = [
-              { title: 'API 문서', url: '#' },
-              { title: 'Axios 가이드', url: '#' }
-            ];
-          } else if (userQuestion.includes('코드') && userQuestion.includes('최적화')) {
-            response = "코드 최적화를 위한 몇 가지 제안을 드리겠습니다:<br><br>1. <strong>불필요한 렌더링 줄이기</strong>: Vue의 computed 속성이나 메모이제이션을 활용하세요.<br>2. <strong>비동기 컴포넌트</strong>: 큰 컴포넌트는 비동기적으로 로드하세요.<br>3. <strong>가상 스크롤링</strong>: 대량의 데이터를 표시할 때 사용하세요.<br><br>예시:<br><pre><code>// 최적화 전\ncomponents: {\n  HeavyComponent\n}\n\n// 최적화 후\ncomponents: {\n  HeavyComponent: () => import('./HeavyComponent.vue')\n}</code></pre>";
-            sources = [
-              { title: 'Vue 최적화 가이드', url: '#' },
-              { title: '성능 모니터링 도구', url: '#' }
-            ];
-          } else if (userQuestion.includes('데이터 구조') || userQuestion.includes('설계')) {
-            response = "데이터 구조 설계 시 고려해야 할 사항들입니다:<br><br>1. <strong>정규화 vs 비정규화</strong>: 데이터 접근 패턴에 따라 적절히 선택하세요.<br>2. <strong>확장성</strong>: 미래의 기능 확장을 고려한 설계가 필요합니다.<br>3. <strong>일관성</strong>: 네이밍과 구조의 일관성을 유지하세요.<br><br>프로젝트에서는 다음과 같은 구조를 추천합니다:<br><pre><code>// 사용자 데이터 모델\n{\n  id: string,\n  profile: {\n    name: string,\n    role: string,\n    team: string\n  },\n  preferences: {\n    theme: string,\n    notifications: boolean\n  },\n  activity: {\n    lastLogin: timestamp,\n    completedTasks: number\n  }\n}</code></pre>";
-            sources = [
-              { title: '데이터 모델링 모범 사례', url: '#' },
-              { title: 'NoSQL vs SQL 비교', url: '#' }
-            ];
-          }
-          
-          // AI 메시지 추가
-          this.messages.push({
-            isUser: false,
-            text: response,
-            time: new Date(),
-            sources: sources
-          });
-          
-          // 스크롤 최하단으로 이동
-          this.$nextTick(() => {
-            this.scrollToBottom();
-          });
-          
-          // 현재 대화가 새로운 대화라면 히스토리에 저장
-          if (this.currentHistoryIndex === -1) {
-            this.saveChatHistory();
-          } else {
-            // 기존 대화라면 히스토리 업데이트
-            this.updateChatHistory();
-          }
-        }, 1000);
-        
-        // 스크롤 최하단으로 이동
-        this.$nextTick(() => {
-          this.scrollToBottom();
-        });
-      },
-      
-      scrollToBottom() {
-        const chatContainer = this.$refs.chatMessages;
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      },
-      
-      formatTime(date) {
-        return new Intl.DateTimeFormat('ko-KR', {
-          hour: '2-digit',
-          minute: '2-digit'
-        }).format(date);
-      },
-      
-      formatDate(date) {
-        return new Intl.DateTimeFormat('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }).format(date);
-      },
-      
-      formatMessage(text) {
-        // 실제로는 마크다운이나 코드 하이라이팅 라이브러리 사용 권장
-        return text;
-      },
-      
-      applyQuestion(question) {
-        this.userInput = question;
-        this.$nextTick(() => {
-          this.$refs.chatInput.focus();
-        });
-      },
-      
-      // 대화 기록 관련 메소드
-      loadChatHistory(index) {
-        // 현재 대화가 저장되지 않았다면 먼저 저장
-        if (this.messages.length > 0 && this.currentHistoryIndex === -1) {
-          if (confirm('현재 대화를 저장하시겠습니까?')) {
-            this.saveChatHistory();
-          }
-        }
-        
-        this.currentHistoryIndex = index;
-        this.messages = [...this.chatHistories[index].messages];
-        this.toggleSidebar();
-        
-        // 스크롤 최하단으로 이동
-        this.$nextTick(() => {
-          this.scrollToBottom();
-        });
-      },
-      
-      startNewChat() {
-        // 현재 대화가 저장되지 않았고 메시지가 있다면 저장 여부 확인
-        if (this.messages.length > 0 && this.currentHistoryIndex === -1) {
-          if (confirm('현재 대화를 저장하시겠습니까?')) {
-            this.saveChatHistory();
-          }
-        }
-        
-        this.messages = [];
-        this.currentHistoryIndex = -1;
-        this.toggleSidebar();
-      },
-      
-      saveChatHistory() {
-        if (this.messages.length < 2) return; // 최소한 질문과 답변이 있어야 함
-        
-        // 대화 기록 제목 생성 (첫 질문을 기반으로)
-        const firstQuestion = this.messages.find(m => m.isUser)?.text || '';
-        const title = firstQuestion.length > 20 
-          ? firstQuestion.substring(0, 20) + '...' 
-          : firstQuestion;
-        
-        // 미리보기 생성
-        const preview = firstQuestion.length > 40 
-          ? firstQuestion.substring(0, 40) + '...' 
-          : firstQuestion;
-        
-        // 새로운 대화 기록 객체 생성
-        const newHistory = {
-          id: Date.now(), // 고유 ID
-          title: title,
-          date: new Date(),
-          preview: preview,
-          messages: [...this.messages]
-        };
-        
-        // 히스토리 배열에 추가 (실제 구현에선 localStorage나 서버에 저장)
-        this.chatHistories.unshift(newHistory);
-        this.currentHistoryIndex = 0;
-        
-        // 실제 앱에서는 localStorage나 서버에 저장하는 코드가 추가되어야 함
-        // localStorage.setItem('chatHistories', JSON.stringify(this.chatHistories));
-      },
-      
-      updateChatHistory() {
-        if (this.currentHistoryIndex === -1) return;
-        
-        // 현재 히스토리 업데이트
-        this.chatHistories[this.currentHistoryIndex].messages = [...this.messages];
-        this.chatHistories[this.currentHistoryIndex].date = new Date();
-        
-        // 실제 앱에서는 localStorage나 서버에 저장하는 코드가 추가되어야 함
-        // localStorage.setItem('chatHistories', JSON.stringify(this.chatHistories));
-      },
-      
-      // 대화 기록 삭제 (추가 기능)
-      deleteHistory(index) {
-        if (confirm('이 대화 기록을 삭제하시겠습니까?')) {
-          this.chatHistories.splice(index, 1);
-          if (this.currentHistoryIndex === index) {
-            this.currentHistoryIndex = -1;
-            this.messages = [];
-          } else if (this.currentHistoryIndex > index) {
-            this.currentHistoryIndex--;
-          }
-          
-          // 실제 앱에서는 localStorage나 서버에 저장하는 코드가 추가되어야 함
-          // localStorage.setItem('chatHistories', JSON.stringify(this.chatHistories));
-        }
-      },
+// 템플릿 참조
+const chatInput = ref(null);
+const chatMessages = ref(null);
 
-      fetchChatHistoriesFromServer() {
-        axios.get("http://localhost:8000/chat/histories")
-          .then(res => {
-            const serverHistories = res.data.histories;
+// 사이드바 토글
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;
 
-            this.chatHistories = serverHistories.map((history, idx) => {
-              const question = history.query;
-              const answer = history.messages.find(msg => msg.type === 'AIMessage')?.content || '';
+  if (sidebarOpen.value) {
+    fetchChatHistoriesFromServer();
+  }
+};
 
-              return {
-                id: Date.now() + idx,
-                title: question.length > 20 ? question.slice(0, 20) + '...' : question,
-                date: new Date(),  // 서버 날짜가 없으므로 현재 시간
-                preview: answer.length > 40 ? answer.slice(0, 40) + '...' : answer,
-                messages: history.messages.map(msg => ({
-                  isUser: msg.type === 'HumanMessage',
-                  text: msg.content,
-                  time: new Date()
-                }))
-              };
-            });
-          })
-          .catch(err => {
-            console.error("✅ 대화 기록 불러오기 실패:", err);
-          });
-      }
-
-    },
-    mounted() {
-      // 자동으로 입력창에 포커스
-      this.$nextTick(() => {
-        this.$refs.chatInput.focus();
+// 메시지 전송
+const sendMessage = async () => {
+  if (userInput.value.trim() === '') return;
+  
+  // 사용자 메시지 추가
+  messages.value.push({
+    isUser: true,
+    text: userInput.value,
+    time: new Date()
+  });
+  
+  const userQuestion = userInput.value;
+  userInput.value = '';
+  
+  // 입력창 높이 초기화
+  await nextTick(() => {
+    adjustTextareaHeight();
+  });
+  
+  // 스크롤 최하단으로 이동
+  await nextTick(() => {
+    scrollToBottom();
+  });
+  
+  // API 호출 시작 - 로딩 상태 설정
+  isLoading.value = true;
+  
+  try {
+    // API 서비스를 사용하여 메시지 전송
+    const data = await sendChatMessage(userQuestion);
+    if (data.messages?.length > 0) {
+      const aiMessage = data.messages[0];
+      
+      // AI 메시지 추가
+      messages.value.push({
+        isUser: false,
+        text: aiMessage.content,
+        time: new Date(),
+        sources: aiMessage.sources || []
       });
-      
-      // 실제 앱에서는 localStorage에서 대화 기록을 불러오는 코드가 필요함
-      // const savedHistories = localStorage.getItem('chatHistories');
-      // if (savedHistories) {
-      //   this.chatHistories = JSON.parse(savedHistories);
-      // }
+    } else {
+      throw new Error('응답 형식이 올바르지 않습니다.');
+    }
+  } catch (error) {
+    console.error('API 호출 오류:', error);
+    
+    // 오류 메시지 표시
+    messages.value.push({
+      isUser: false,
+      text: "죄송합니다만, 서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      time: new Date(),
+      sources: []
+    });
+  } finally {
+    isLoading.value = false;
+    
+    // 현재 대화가 새로운 대화라면 히스토리에 저장
+    if (currentHistoryIndex.value === -1 && messages.value.length > 1) {
+      saveChatHistory();
+    } else if (currentHistoryIndex.value !== -1) {
+      // 기존 대화라면 히스토리 업데이트
+      updateChatHistory();
+    }
+    
+    // 스크롤 최하단으로 이동
+    await nextTick(() => {
+      scrollToBottom();
+    });
+  }
+};
+
+// 스크롤 최하단으로 이동
+const scrollToBottom = () => {
+  if (chatMessages.value) {
+    chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
+  }
+};
+
+// 텍스트 영역 높이 조절
+const adjustTextareaHeight = () => {
+  if (chatInput.value) {
+    chatInput.value.style.height = 'auto';
+    chatInput.value.style.height = chatInput.value.scrollHeight + 'px';
+  }
+};
+
+// 시간 형식 지정
+const formatTime = (date) => {
+  return new Intl.DateTimeFormat('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+};
+
+// 날짜 형식 지정
+const formatDate = (date) => {
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+};
+
+// 메시지 형식 지정 (마크다운/코드 처리)
+const formatMessage = (text) => {
+  // 실제로는 마크다운이나 코드 하이라이팅 라이브러리 사용 권장
+  return text;
+};
+
+// 질문 적용
+const applyQuestion = (question) => {
+  userInput.value = question;
+  nextTick(() => {
+    if (chatInput.value) {
+      chatInput.value.focus();
+      adjustTextareaHeight();
+    }
+  });
+};
+
+// 대화 기록 불러오기
+const loadChatHistory = (index) => {
+  // 현재 대화가 저장되지 않았다면 먼저 저장
+  if (messages.value.length > 0 && currentHistoryIndex.value === -1) {
+    if (confirm('현재 대화를 저장하시겠습니까?')) {
+      saveChatHistory();
     }
   }
-  </script>
+  
+  currentHistoryIndex.value = index;
+  messages.value = [...chatHistories.value[index].messages];
+  toggleSidebar();
+  
+  // 스크롤 최하단으로 이동
+  nextTick(() => {
+    scrollToBottom();
+  });
+};
+
+// 새 대화 시작
+const startNewChat = () => {
+  // 현재 대화가 저장되지 않았고 메시지가 있다면 저장 여부 확인
+  if (messages.value.length > 0 && currentHistoryIndex.value === -1) {
+    if (confirm('현재 대화를 저장하시겠습니까?')) {
+      saveChatHistory();
+    }
+  }
+  
+  messages.value = [];
+  currentHistoryIndex.value = -1;
+  toggleSidebar();
+};
+
+// 대화 기록 저장
+const saveChatHistory = () => {
+  if (messages.value.length < 2) return; // 최소한 질문과 답변이 있어야 함
+  
+  // 대화 기록 제목 생성 (첫 질문을 기반으로)
+  const firstQuestion = messages.value.find(m => m.isUser)?.text || '';
+  const title = firstQuestion.length > 20 
+    ? firstQuestion.substring(0, 20) + '...' 
+    : firstQuestion;
+  
+  // 미리보기 생성
+  const preview = firstQuestion.length > 40 
+    ? firstQuestion.substring(0, 40) + '...' 
+    : firstQuestion;
+  
+  // 새로운 대화 기록 객체 생성
+  const newHistory = {
+    id: Date.now(), // 고유 ID
+    title: title,
+    date: new Date(),
+    preview: preview,
+    messages: [...messages.value]
+  };
+  
+  // 히스토리 배열에 추가
+  chatHistories.value.unshift(newHistory);
+  currentHistoryIndex.value = 0;
+  
+  // 실제 앱에서는 localStorage나 서버에 저장하는 코드 추가
+  // localStorage.setItem('chatHistories', JSON.stringify(chatHistories.value));
+};
+
+// 대화 기록 업데이트
+const updateChatHistory = () => {
+  if (currentHistoryIndex.value === -1) return;
+  
+  // 현재 히스토리 업데이트
+  chatHistories.value[currentHistoryIndex.value].messages = [...messages.value];
+  chatHistories.value[currentHistoryIndex.value].date = new Date();
+  
+  // 실제 앱에서는 localStorage나 서버에 저장하는 코드 추가
+  // localStorage.setItem('chatHistories', JSON.stringify(chatHistories.value));
+};
+
+// 대화 기록 삭제
+const deleteHistory = (index) => {
+  if (confirm('이 대화 기록을 삭제하시겠습니까?')) {
+    chatHistories.value.splice(index, 1);
+    if (currentHistoryIndex.value === index) {
+      currentHistoryIndex.value = -1;
+      messages.value = [];
+    } else if (currentHistoryIndex.value > index) {
+      currentHistoryIndex.value--;
+    }
+    
+    // 실제 앱에서는 localStorage나 서버에 저장하는 코드 추가
+    // localStorage.setItem('chatHistories', JSON.stringify(chatHistories.value));
+  }
+};
+
+// 서버에서 대화 기록 가져오기
+const fetchChatHistoriesFromServer = async () => {
+  try {
+    const response = await apiService.getChatHistories();
+    const serverHistories = response.data.histories;
+
+    chatHistories.value = serverHistories.map((history, idx) => {
+      const question = history.query;
+      const answer = history.messages.find(msg => msg.type === 'AIMessage')?.content || '';
+
+      return {
+        id: Date.now() + idx,
+        title: question.length > 20 ? question.slice(0, 20) + '...' : question,
+        date: new Date(),  // 서버 날짜가 없으므로 현재 시간
+        preview: answer.length > 40 ? answer.slice(0, 40) + '...' : answer,
+        messages: history.messages.map(msg => ({
+          isUser: msg.type === 'HumanMessage',
+          text: msg.content,
+          time: new Date()
+        }))
+      };
+    });
+  } catch (err) {
+    console.error("✅ 대화 기록 불러오기 실패:", err);
+  }
+};
+
+// userInput이 변경될 때마다 높이 조절
+watch(userInput, () => {
+  nextTick(adjustTextareaHeight);
+});
+
+// 컴포넌트 마운트 시 실행
+onMounted(() => {
+  // 자동으로 입력창에 포커스
+  if (chatInput.value) {
+    chatInput.value.focus();
+    adjustTextareaHeight();
+  }
+});
+</script>
   
   <style scoped>
   .chatbot-container {
