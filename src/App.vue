@@ -15,14 +15,12 @@
 <script>
 import SideBar from './components/SideBar.vue';
 // import TopNavBar from './components/TopNavBar.vue'; // 주석 처리되어 있음
-import FloatingChatButton from './components/FloatingChatButton.vue';
 
 export default {
   name: 'App',
   components: {
     SideBar,
     // TopNavBar는 주석 처리되어 있음
-    FloatingChatButton
   },
   data() {
     return {
@@ -34,10 +32,6 @@ export default {
     toggleSidebar() {
       this.sidebarOpen = !this.sidebarOpen;
     },
-    openChatbot() {
-      // 챗봇 열기 로직
-      this.$router.push('/chatbot');
-    }
   }
 }
 </script>

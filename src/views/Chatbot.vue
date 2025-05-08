@@ -1,136 +1,122 @@
 <template>
     <div class="chatbot-container">
+      <!-- 챗봇 헤더 -->
       <div class="chatbot-header">
         <div class="header-content">
-          <h2>AI 챗봇</h2>
-          <p>질문하고 즉시 답변을 받아보세요. 프로젝트 관련 질문이나 도움이 필요한 내용을 물어보세요.</p>
+          <div class="header-title-wrapper">
+            <h2>AI 챗봇 어시스턴트</h2>
+          </div>
+          <p>프로젝트 관련 질문이나 도움이 필요한 내용을 물어보세요. AI가 즉시 답변해 드립니다.</p>
+        </div>
+        
+        <div class="header-decoration">
+          <div class="decoration-circle circle-1"></div>
+          <div class="decoration-circle circle-2"></div>
+          <div class="decoration-circle circle-3"></div>
         </div>
       </div>
       
-      <div class="chatbot-content">
-        <div class="chatbot-sidebar">
-          <div class="history-header">
-            <h3>대화 기록</h3>
-            <button class="new-chat-btn" @click="startNewChat">
-              <i class="fas fa-plus"></i>
-              새 대화
-            </button>
-          </div>
-          
-          <div class="chat-history">
-            <div 
-              v-for="(chat, index) in chatHistory" 
-              :key="index" 
-              class="history-item"
-              :class="{ 'active': currentChatIndex === index }"
-              @click="loadChat(index)"
-            >
-              <div class="history-icon">
-                <i class="fas fa-comment-dots"></i>
-              </div>
-              <div class="history-details">
-                <h4>{{ chat.title }}</h4>
-                <p>{{ formatDate(chat.date) }}</p>
-              </div>
+      <!-- 메인 채팅 영역 -->
+      <div class="chat-main">
+        <div class="chat-messages" ref="chatMessages">
+          <!-- 빈 채팅일 때 표시 -->
+          <div v-if="messages.length === 0" class="empty-chat">
+            <div class="empty-illustration">
+              <svg xmlns="http://www.w3.org/2000/svg" class="robot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <circle cx="12" cy="5" r="2" />
+                <path d="M12 7v4" />
+                <line x1="8" y1="16" x2="8" y2="16" />
+                <line x1="16" y1="16" x2="16" y2="16" />
+              </svg>
+            </div>
+            <h3>AI 챗봇에게 질문해보세요</h3>
+            <p>프로젝트 관련 질문, 코드 검증, 문서 검색 등 다양한 도움을 받을 수 있습니다.</p>
+            <div class="suggestion-chips">
+              <button class="chip" @click="applyQuestion('프로젝트 구조를 설명해줘')">
+                <span class="chip-icon">📂</span>
+                프로젝트 구조를 설명해줘
+              </button>
+              <button class="chip" @click="applyQuestion('API 연동은 어떻게 하나요?')">
+                <span class="chip-icon">🔌</span>
+                API 연동은 어떻게 하나요?
+              </button>
+              <button class="chip" @click="applyQuestion('이 코드를 최적화해줄래?')">
+                <span class="chip-icon">⚙️</span>
+                이 코드를 최적화해줄래?
+              </button>
+              <button class="chip" @click="applyQuestion('데이터 구조 설계 조언이 필요해')">
+                <span class="chip-icon">📊</span>
+                데이터 구조 설계 조언이 필요해
+              </button>
             </div>
           </div>
+          
+          <!-- 메시지 표시 영역 -->
+          <template v-else>
+            <div 
+              v-for="(message, index) in messages" 
+              :key="index" 
+              class="message"
+              :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
+            >
+              <div class="message-avatar">
+                <div class="avatar-image" :class="{ 'user-avatar': message.isUser, 'bot-avatar': !message.isUser }">
+                  <span v-if="message.isUser">{{ userInitial }}</span>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path d="M16.5 7.5h-9v9h9v-9z" />
+                    <path fill-rule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
+                  <span class="message-time">{{ formatTime(message.time) }}</span>
+                </div>
+                <div class="message-text" v-html="formatMessage(message.text)"></div>
+                <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
+                  <span class="sources-label">출처:</span>
+                  <div class="source-list">
+                    <a 
+                      v-for="(source, sourceIndex) in message.sources" 
+                      :key="sourceIndex" 
+                      :href="source.url" 
+                      target="_blank" 
+                      class="source-item"
+                    >
+                      {{ source.title }}
+                    </a>
+                  </div>
+                </div>
+            
+              </div>
+            </div>
+          </template>
         </div>
         
-        <div class="chat-main">
-          <div class="chat-messages" ref="chatMessages">
-            <div v-if="messages.length === 0" class="empty-chat">
-              <div class="empty-illustration">
-                <i class="fas fa-robot"></i>
-              </div>
-              <h3>AI 챗봇에게 질문해보세요</h3>
-              <p>프로젝트 관련 질문, 코드 검증, 문서 검색 등 다양한 도움을 받을 수 있습니다.</p>
-              <div class="suggestion-chips">
-                <button class="chip" @click="applyQuestion('프로젝트 구조를 설명해줘')">
-                  프로젝트 구조를 설명해줘
-                </button>
-                <button class="chip" @click="applyQuestion('API 연동은 어떻게 하나요?')">
-                  API 연동은 어떻게 하나요?
-                </button>
-                <button class="chip" @click="applyQuestion('이 코드를 최적화해줄래?')">
-                  이 코드를 최적화해줄래?
-                </button>
-              </div>
-            </div>
-            
-            <template v-else>
-              <div 
-                v-for="(message, index) in messages" 
-                :key="index" 
-                class="message"
-                :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
-              >
-                <div class="message-avatar">
-                  <img :src="message.isUser ? '/daeun_profile.png' : '/ai_avatar.png'" :alt="message.isUser ? '사용자' : 'AI'">
-                </div>
-                <div class="message-content">
-                  <div class="message-header">
-                    <span class="message-sender">{{ message.isUser ? '김신입' : 'AI 어시스턴트' }}</span>
-                    <span class="message-time">{{ formatTime(message.time) }}</span>
-                  </div>
-                  <div class="message-text" v-html="formatMessage(message.text)"></div>
-                  <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
-                    <span class="sources-label">출처:</span>
-                    <div class="source-list">
-                      <a 
-                        v-for="(source, sourceIndex) in message.sources" 
-                        :key="sourceIndex" 
-                        :href="source.url" 
-                        target="_blank" 
-                        class="source-item"
-                      >
-                        {{ source.title }}
-                      </a>
-                    </div>
-                  </div>
-                  <div v-if="!message.isUser" class="message-actions">
-                    <button class="action-btn thumbs-up" title="유용한 답변">
-                      <i class="fas fa-thumbs-up"></i>
-                    </button>
-                    <button class="action-btn thumbs-down" title="유용하지 않은 답변">
-                      <i class="fas fa-thumbs-down"></i>
-                    </button>
-                    <button class="action-btn copy" title="복사하기">
-                      <i class="fas fa-copy"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
+        <!-- 입력 영역 -->
+        <div class="chat-input-container">
+          <div class="input-wrapper">
+            <textarea 
+              v-model="userInput" 
+              class="chat-input" 
+              placeholder="메시지를 입력하세요..."
+              @keydown.enter.prevent="sendMessage"
+              ref="chatInput"
+              rows="1"
+            ></textarea>
           
-          <div class="chat-input-container">
-            <div class="input-wrapper">
-              <textarea 
-                v-model="userInput" 
-                class="chat-input" 
-                placeholder="메시지를 입력하세요..."
-                @keydown.enter.prevent="sendMessage"
-                ref="chatInput"
-                rows="1"
-              ></textarea>
-              <div class="input-actions">
-                <button class="attach-btn" title="파일 첨부">
-                  <i class="fas fa-paperclip"></i>
-                </button>
-                <button class="code-btn" title="코드 삽입">
-                  <i class="fas fa-code"></i>
-                </button>
-              </div>
-            </div>
-            <button 
-              class="send-btn" 
-              :class="{ 'active': userInput.trim().length > 0 }" 
-              @click="sendMessage"
-              :disabled="userInput.trim().length === 0"
-            >
-              <i class="fas fa-paper-plane"></i>
-            </button>
           </div>
+          <button 
+            class="send-btn" 
+            :class="{ 'active': userInput.trim().length > 0 }" 
+            @click="sendMessage"
+            :disabled="userInput.trim().length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -143,12 +129,8 @@
       return {
         userInput: '',
         messages: [],
-        chatHistory: [
-          { title: '프로젝트 구조 질문', date: new Date(2025, 4, 7, 15, 30) },
-          { title: 'API 연동 문제 해결', date: new Date(2025, 4, 6, 11, 45) },
-          { title: '컴포넌트 재사용성 개선', date: new Date(2025, 4, 5, 9, 20) }
-        ],
-        currentChatIndex: null
+        userName: '김신입',
+        userInitial: '김'
       }
     },
     methods: {
@@ -188,6 +170,18 @@
               { title: 'API 문서', url: '#' },
               { title: 'Axios 가이드', url: '#' }
             ];
+          } else if (userQuestion.includes('코드') && userQuestion.includes('최적화')) {
+            response = "코드 최적화를 위한 몇 가지 제안을 드리겠습니다:<br><br>1. <strong>불필요한 렌더링 줄이기</strong>: Vue의 computed 속성이나 메모이제이션을 활용하세요.<br>2. <strong>비동기 컴포넌트</strong>: 큰 컴포넌트는 비동기적으로 로드하세요.<br>3. <strong>가상 스크롤링</strong>: 대량의 데이터를 표시할 때 사용하세요.<br><br>예시:<br><pre><code>// 최적화 전\ncomponents: {\n  HeavyComponent\n}\n\n// 최적화 후\ncomponents: {\n  HeavyComponent: () => import('./HeavyComponent.vue')\n}</code></pre>";
+            sources = [
+              { title: 'Vue 최적화 가이드', url: '#' },
+              { title: '성능 모니터링 도구', url: '#' }
+            ];
+          } else if (userQuestion.includes('데이터 구조') || userQuestion.includes('설계')) {
+            response = "데이터 구조 설계 시 고려해야 할 사항들입니다:<br><br>1. <strong>정규화 vs 비정규화</strong>: 데이터 접근 패턴에 따라 적절히 선택하세요.<br>2. <strong>확장성</strong>: 미래의 기능 확장을 고려한 설계가 필요합니다.<br>3. <strong>일관성</strong>: 네이밍과 구조의 일관성을 유지하세요.<br><br>프로젝트에서는 다음과 같은 구조를 추천합니다:<br><pre><code>// 사용자 데이터 모델\n{\n  id: string,\n  profile: {\n    name: string,\n    role: string,\n    team: string\n  },\n  preferences: {\n    theme: string,\n    notifications: boolean\n  },\n  activity: {\n    lastLogin: timestamp,\n    completedTasks: number\n  }\n}</code></pre>";
+            sources = [
+              { title: '데이터 모델링 모범 사례', url: '#' },
+              { title: 'NoSQL vs SQL 비교', url: '#' }
+            ];
           }
           
           // AI 메시지 추가
@@ -202,19 +196,6 @@
           this.$nextTick(() => {
             this.scrollToBottom();
           });
-          
-          // 첫 메시지인 경우 대화 기록 추가
-          if (this.currentChatIndex === null && this.messages.length === 2) {
-            const title = userQuestion.length > 20 
-              ? userQuestion.substring(0, 20) + '...' 
-              : userQuestion;
-            
-            this.chatHistory.unshift({
-              title: title,
-              date: new Date()
-            });
-            this.currentChatIndex = 0;
-          }
         }, 1000);
         
         // 스크롤 최하단으로 이동
@@ -226,12 +207,6 @@
         const chatContainer = this.$refs.chatMessages;
         chatContainer.scrollTop = chatContainer.scrollHeight;
       },
-      formatDate(date) {
-        return new Intl.DateTimeFormat('ko-KR', {
-          month: 'short',
-          day: 'numeric'
-        }).format(date);
-      },
       formatTime(date) {
         return new Intl.DateTimeFormat('ko-KR', {
           hour: '2-digit',
@@ -241,30 +216,6 @@
       formatMessage(text) {
         // 실제로는 마크다운이나 코드 하이라이팅 라이브러리 사용 권장
         return text;
-      },
-      startNewChat() {
-        this.messages = [];
-        this.currentChatIndex = null;
-      },
-      loadChat(index) {
-        // 실제로는 서버에서 대화 내용을 불러와야 함
-        this.currentChatIndex = index;
-        this.messages = [
-          {
-            isUser: true,
-            text: '이 프로젝트의 구조를 설명해줄래?',
-            time: new Date(2025, 4, 7, 15, 30)
-          },
-          {
-            isUser: false,
-            text: '본 프로젝트는 Vue.js 기반의 프론트엔드와 Node.js 백엔드로 구성되어 있습니다.<br><br>주요 구조는 다음과 같습니다:<br>- <code>components/</code>: 재사용 가능한 UI 컴포넌트<br>- <code>views/</code>: 페이지 컴포넌트<br>- <code>services/</code>: API 연동 및 비즈니스 로직<br>- <code>store/</code>: Vuex 상태 관리<br><br>CI/CD 파이프라인은 GitHub Actions를 통해 자동화되어 있으며, 테스트 후 AWS에 자동 배포됩니다.',
-            time: new Date(2025, 4, 7, 15, 32),
-            sources: [
-              { title: '프로젝트 구조 문서', url: '#' },
-              { title: '개발 가이드라인', url: '#' }
-            ]
-          }
-        ];
       },
       applyQuestion(question) {
         this.userInput = question;
@@ -281,545 +232,606 @@
     }
   }
   </script>
-  
-  <style scoped>
-  .chatbot-container {
-    padding: 0;
-    max-width: 1400px;
-    margin: 0 auto;
-    height: calc(100vh - 20px);
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background-light);
-  }
-  
+
+<style scoped>
+.chatbot-container {
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0047AB, #87CEEB);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 헤더 스타일 */
+.chatbot-header {
+  padding: 50px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(159, 122, 234, 0.15);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 150px;
+  height: 150px;
+  top: -70px;
+  right: 10%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.circle-2 {
+  width: 80px;
+  height: 80px;
+  bottom: -20px;
+  right: 20%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.circle-3 {
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  right: 30%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.header-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.header-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.chatbot-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.5px;
+}
+
+.chatbot-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  max-width: 600px;
+  line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-top: 0;
+}
+
+/* 메인 채팅 영역 */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  margin-top: -20px;
+  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.chat-messages {
+  flex: 10;
+  overflow-y: auto;
+  padding: 30px;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 20px;
+}
+
+/* 빈 채팅 상태 */
+.empty-chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-illustration {
+  margin-bottom: 20px;
+}
+
+.robot-icon {
+  width: 80px;
+  height: 80px;
+  color: rgba(96, 165, 250, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.empty-chat h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #333;
+  background: linear-gradient(135deg, var(--pastel-blue-500), #9f7aea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.empty-chat p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 25px;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 600px;
+}
+
+.chip {
+  background: linear-gradient(to right, #f0f7ff, #eef2ff);
+  color: var(--pastel-blue-500);
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.chip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.chip:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+.chip:hover::before {
+  transform: translateX(100%);
+}
+
+.chip-icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+/* 메시지 스타일 */
+.message {
+  display: flex;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.4s ease;
+  position: relative;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-avatar {
+  margin-right: 15px;
+}
+
+.avatar-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.user-avatar {
+  background: linear-gradient(135deg, var(--pastel-blue-400), #9f7aea);
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.bot-avatar {
+  background: linear-gradient(135deg, #f8faff, #eef2ff);
+  color: var(--pastel-blue-500);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.bot-avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.message-content {
+  flex: 1;
+  max-width: calc(100% - 60px);
+  position: relative;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.message-sender {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.message-time {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.message-text {
+  line-height: 1.6;
+  font-size: 0.98rem;
+  color: #444;
+  word-wrap: break-word;
+}
+
+.message-text code {
+  font-family: 'Fira Code', 'Menlo', 'Monaco', monospace;
+  background-color: #f5f7fb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--pastel-blue-500);
+  font-size: 0.9em;
+}
+
+.message-text pre {
+  background-color: #f5f7fb;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.message-text pre::before {
+  content: 'Code';
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(96, 165, 250, 0.1);
+  color: var(--pastel-blue-500);
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  border-bottom-left-radius: 6px;
+  font-weight: 600;
+}
+
+.message-text pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #444;
+  display: block;
+  font-size: 0.85rem;
+}
+
+.message-sources {
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+
+.sources-label {
+  color: #666;
+  margin-right: 5px;
+  font-weight: 500;
+}
+
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.source-item {
+  display: inline-block;
+  color: var(--pastel-blue-500);
+  background-color: #f0f7ff;
+  padding: 6px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(96, 165, 250, 0.15);
+}
+
+.source-item:hover {
+  background-color: #e1effe;
+  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.15);
+  transform: translateY(-2px);
+}
+
+.message-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.message-content:hover .message-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+}
+
+.action-btn:hover {
+  background-color: #f0f7ff;
+  color: var(--pastel-blue-500);
+  transform: scale(1.1);
+}
+
+.user-message .message-content {
+  background: linear-gradient(to right, #f0f7ff, #eef2ff);
+  padding: 16px 20px;
+  border-radius: 0 18px 18px 18px;
+  box-shadow: 0 3px 10px rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+}
+
+.bot-message .message-content {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 18px 0 18px 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  border-left: 3px solid var(--pastel-blue-300);
+}
+
+.bot-message .message-content::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-left: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  transform: rotate(45deg);
+  border-bottom-left-radius: 4px;
+}
+
+/* 입력 영역 스타일 */
+.chat-input-container {
+  padding: 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  background: #f8faff;
+}
+
+.input-wrapper {
+  flex: 1;
+  background-color: white;
+  border-radius: 16px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--pastel-blue-300);
+  box-shadow: 0 3px 15px rgba(96, 165, 250, 0.15);
+  transform: translateY(-2px);
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 16px;
+  resize: none;
+  max-height: 150px;
+  font-size: 1rem;
+  color: #444;
+  font-family: inherit;
+  outline: none;
+  border-radius: 16px;
+}
+
+.input-actions {
+  display: flex;
+  padding: 0 10px 12px 0;
+  gap: 6px;
+}
+
+.input-action-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.input-action-btn:hover {
+  color: var(--pastel-blue-500);
+  background-color: #f0f7ff;
+  transform: scale(1.1);
+}
+
+.send-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background: #e5e7eb;
+  color: #888;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.send-btn.active {
+  background: linear-gradient(135deg, var(--pastel-blue-400), #9f7aea);
+  color: white;
+}
+
+.send-btn.active:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 5px 15px rgba(96, 165, 250, 0.3);
+}
+
+.send-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
   .chatbot-header {
-    background: linear-gradient(135deg, #0047AB, #87CEEB);
-    border-radius: 20px;
-    padding: 30px;
-    margin: 0 30px 30px;
-    color: white;
-    box-shadow: 0 8px 20px rgba(0, 71, 171, 0.15);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .chatbot-header::before {
-    content: '';
-    position: absolute;
-    width: 250px;
-    height: 250px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    top: -120px;
-    right: -50px;
-  }
-  
-  .header-content {
-    position: relative;
-    z-index: 2;
+    padding: 20px;
   }
   
   .chatbot-header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1.4rem;
   }
   
   .chatbot-header p {
-    font-size: 1rem;
-    opacity: 0.95;
-    max-width: 600px;
-    line-height: 1.6;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  .chatbot-content {
-    display: flex;
-    flex: 1;
-    gap: 30px;
-    padding: 0 30px 30px;
-    height: calc(100% - 140px);
-    overflow: hidden;
-  }
-  
-  .chatbot-sidebar {
-    width: 300px;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgba(165, 200, 225, 0.2);
-    overflow: hidden;
-  }
-  
-  .history-header {
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(165, 200, 225, 0.2);
-  }
-  
-  .history-header h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333333;
-  }
-  
-  .new-chat-btn {
-    background-color: #0047AB;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 15px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .new-chat-btn:hover {
-    background-color: #003d91;
-    transform: translateY(-2px);
-  }
-  
-  .new-chat-btn i {
-    margin-right: 8px;
     font-size: 0.9rem;
-  }
-  
-  .chat-history {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-  }
-  
-  .history-item {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .history-item:hover {
-    background-color: rgba(165, 200, 225, 0.1);
-  }
-  
-  .history-item.active {
-    background-color: rgba(0, 71, 171, 0.08);
-    border-left: 3px solid #0047AB;
-  }
-  
-  .history-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background-color: rgba(0, 71, 171, 0.1);
-    color: #0047AB;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-  }
-  
-  .history-icon i {
-    font-size: 1rem;
-  }
-  
-  .history-details {
-    flex: 1;
-  }
-  
-  .history-details h4 {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #333333;
-    margin-bottom: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .history-details p {
-    font-size: 0.75rem;
-    color: #666666;
-  }
-  
-  .chat-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(165, 200, 225, 0.2);
-    overflow: hidden;
   }
   
   .chat-messages {
-    flex: 1;
-    overflow-y: auto;
     padding: 20px;
-  }
-  
-  .empty-chat {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #666666;
-    text-align: center;
-    padding: 0 20px;
-  }
-  
-  .empty-illustration {
-    font-size: 4rem;
-    color: rgba(0, 71, 171, 0.2);
-    margin-bottom: 20px;
-  }
-  
-  .empty-chat h3 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333333;
-  }
-  
-  .empty-chat p {
-    font-size: 1rem;
-    color: #666666;
-    margin-bottom: 25px;
-    max-width: 500px;
-    line-height: 1.6;
-  }
-  
-  .suggestion-chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .chip {
-    background-color: rgba(0, 71, 171, 0.08);
-    color: #0047AB;
-    border: 1px solid rgba(0, 71, 171, 0.2);
-    border-radius: 20px;
-    padding: 8px 15px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-  
-  .chip:hover {
-    background-color: rgba(0, 71, 171, 0.15);
-    transform: translateY(-2px);
-  }
-  
-  .message {
-    display: flex;
-    margin-bottom: 25px;
-    animation: fadeIn 0.3s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 15px;
-  }
-  
-  .message-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .message-content {
-    flex: 1;
-    max-width: calc(100% - 55px);
-  }
-  
-  .message-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-  }
-  
-  .message-sender {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #333333;
-  }
-  
-  .message-time {
-    font-size: 0.8rem;
-    color: #999999;
-  }
-  
-  .message-text {
-    line-height: 1.6;
-    font-size: 0.95rem;
-    color: #444444;
-    word-wrap: break-word;
-  }
-  
-  .message-text code {
-    font-family: 'Courier New', monospace;
-    background-color: #f7f7f7;
-    padding: 2px 5px;
-    border-radius: 4px;
-    color: #0047AB;
-    font-size: 0.9em;
-  }
-  
-  .message-text pre {
-    background-color: #f7f7f7;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 10px 0;
-    overflow-x: auto;
-  }
-  
-  .message-text pre code {
-    background-color: transparent;
-    padding: 0;
-    color: #333333;
-    display: block;
-  }
-  
-  .message-sources {
-    margin-top: 10px;
-    font-size: 0.85rem;
-  }
-  
-  .sources-label {
-    color: #666666;
-    margin-right: 5px;
-  }
-  
-  .source-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 5px;
-  }
-  
-  .source-item {
-    display: inline-block;
-    color: #0047AB;
-    background-color: rgba(0, 71, 171, 0.08);
-    padding: 4px 10px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 0.8rem;
-    transition: all 0.2s ease;
-  }
-  
-  .source-item:hover {
-    background-color: rgba(0, 71, 171, 0.15);
-    text-decoration: underline;
-  }
-  
-  .message-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  
-  .message-content:hover .message-actions {
-    opacity: 1;
-  }
-  
-  .action-btn {
-    background: none;
-    border: none;
-    color: #999999;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-  }
-  
-  .action-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .thumbs-up:hover, .thumbs-down:hover {
-    color: #0047AB;
-  }
-  
-  .copy:hover {
-    color: #0047AB;
-  }
-  
-  .user-message .message-content {
-    background-color: rgba(0, 71, 171, 0.08);
-    padding: 15px;
-    border-radius: 18px 18px 2px 18px;
-  }
-  
-  .bot-message .message-content {
-    background-color: #f7f7f7;
-    padding: 15px;
-    border-radius: 18px 18px 18px 2px;
   }
   
   .chat-input-container {
-    padding: 20px;
-    border-top: 1px solid rgba(165, 200, 225, 0.2);
-    display: flex;
-    align-items: flex-end;
-    gap: 15px;
-  }
-  
-  .input-wrapper {
-    flex: 1;
-    background-color: #f7f7f7;
-    border-radius: 20px;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
-  
-  .input-wrapper:focus-within {
-    background-color: #ffffff;
-    border-color: #0047AB;
-    box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.1);
-  }
-  
-  .chat-input {
-    flex: 1;
-    border: none;
-    background: transparent;
     padding: 15px;
-    resize: none;
-    max-height: 150px;
-    font-size: 0.95rem;
-    color: #444444;
-    font-family: inherit;
-    outline: none;
   }
   
-  .input-actions {
-    display: flex;
-    padding: 0 10px 10px 0;
+  .avatar-image {
+    width: 36px;
+    height: 36px;
   }
   
-  .attach-btn, .code-btn {
-    background: none;
-    border: none;
-    color: #999999;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .message-content {
+    max-width: calc(100% - 50px);
   }
-  
-  .attach-btn:hover, .code-btn:hover {
-    color: #0047AB;
-    background-color: rgba(0, 71, 171, 0.1);
+}
+
+/* 사용자 정의 변수: 파스텔 블루 테마 */
+:root {
+  --pastel-blue-100: #e0f2fe;
+  --pastel-blue-200: #bae6fd;
+  --pastel-blue-300: #93c5fd;
+  --pastel-blue-400: #60a5fa;
+  --pastel-blue-500: #3b82f6;
+}
+
+/* 애니메이션 효과 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
   }
-  
-  .send-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #e0e0e0;
-    color: #999999;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  100% {
+    background-position: 200% 0;
   }
-  
-  .send-btn.active {
-    background-color: #0047AB;
-    color: white;
-  }
-  
-  .send-btn.active:hover {
-    background-color: #003d91;
-    transform: translateY(-2px);
-  }
-  
-  .send-btn:disabled {
-    cursor: not-allowed;
-  }
-  
-  @media (max-width: 1024px) {
-    .chatbot-content {
-      flex-direction: column;
-      height: calc(100% - 120px);
-    }
-    
-    .chatbot-sidebar {
-      width: 100%;
-      height: 300px;
-    }
-    
-    .chat-main {
-      flex: 1;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .chatbot-container {
-      height: calc(100vh - 20px);
-    }
-    
-    .chatbot-header {
-      margin: 0 15px 20px;
-      padding: 20px;
-    }
-    
-    .chatbot-content {
-      padding: 0 15px 15px;
-    }
-    
-    .chatbot-header h2 {
-      font-size: 1.5rem;
-    }
-    
-    .chatbot-header p {
-      font-size: 0.9rem;
-    }
-    
-    .chat-input-container {
-      padding: 15px;
-    }
-  }
-  </style>
+}
+
+</style>
