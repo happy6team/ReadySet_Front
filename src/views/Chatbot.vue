@@ -172,6 +172,8 @@
   </template>
     
   <script>
+  import axios from 'axios'
+
   export default {
     name: 'ChatbotView',
     data() {
@@ -182,82 +184,18 @@
         userInitial: '김',
         sidebarOpen: false,
         currentHistoryIndex: -1,
-        chatHistories: [
-          // 샘플 대화 기록 (실제로는 localStorage나 서버에서 가져올 것)
-          {
-            id: 1,
-            title: '프로젝트 구조 문의',
-            date: new Date(2025, 4, 7),
-            preview: '프로젝트의 구조와 파일 시스템에 대한 문의',
-            messages: [
-              {
-                isUser: true,
-                text: '프로젝트 구조를 설명해줘',
-                time: new Date(2025, 4, 7, 14, 30)
-              },
-              {
-                isUser: false,
-                text: "본 프로젝트는 Vue.js 기반의 프론트엔드와 Node.js 백엔드로 구성되어 있습니다.<br><br>주요 구조는 다음과 같습니다:<br>- <code>components/</code>: 재사용 가능한 UI 컴포넌트<br>- <code>views/</code>: 페이지 컴포넌트<br>- <code>services/</code>: API 연동 및 비즈니스 로직<br>- <code>store/</code>: Vuex 상태 관리<br><br>CI/CD 파이프라인은 GitHub Actions를 통해 자동화되어 있으며, 테스트 후 AWS에 자동 배포됩니다.",
-                time: new Date(2025, 4, 7, 14, 31),
-                sources: [
-                  { title: '프로젝트 구조 문서', url: '#' },
-                  { title: '개발 가이드라인', url: '#' }
-                ]
-              }
-            ]
-          },
-          {
-            id: 2,
-            title: 'API 연동 질문',
-            date: new Date(2025, 5, 1),
-            preview: 'API 연동 방법과 인증 처리에 대한 질문',
-            messages: [
-              {
-                isUser: true,
-                text: 'API 연동은 어떻게 하나요?',
-                time: new Date(2025, 5, 1, 10, 15)
-              },
-              {
-                isUser: false,
-                text: "API 연동은 <code>axios</code> 라이브러리를 사용합니다. <code>/services/api.js</code> 파일에 기본 설정이 있으며, 인증 토큰은 자동으로 처리됩니다.<br><br>예시 코드:<br><pre><code>import api from '@/services/api';\n\nasync function fetchData() {\n  try {\n    const response = await api.get('/endpoint');\n    return response.data;\n  } catch (error) {\n    console.error('API 오류:', error);\n  }\n}</code></pre>",
-                time: new Date(2025, 5, 1, 10, 16),
-                sources: [
-                  { title: 'API 문서', url: '#' },
-                  { title: 'Axios 가이드', url: '#' }
-                ]
-              }
-            ]
-          },
-          {
-            id: 3,
-            title: '코드 최적화 도움',
-            date: new Date(2025, 5, 5),
-            preview: '코드 최적화 방법에 대한 문의',
-            messages: [
-              {
-                isUser: true,
-                text: '이 코드를 최적화해줄래?',
-                time: new Date(2025, 5, 5, 16, 20)
-              },
-              {
-                isUser: false,
-                text: "코드 최적화를 위한 몇 가지 제안을 드리겠습니다:<br><br>1. <strong>불필요한 렌더링 줄이기</strong>: Vue의 computed 속성이나 메모이제이션을 활용하세요.<br>2. <strong>비동기 컴포넌트</strong>: 큰 컴포넌트는 비동기적으로 로드하세요.<br>3. <strong>가상 스크롤링</strong>: 대량의 데이터를 표시할 때 사용하세요.<br><br>예시:<br><pre><code>// 최적화 전\ncomponents: {\n  HeavyComponent\n}\n\n// 최적화 후\ncomponents: {\n  HeavyComponent: () => import('./HeavyComponent.vue')\n}</code></pre>",
-                time: new Date(2025, 5, 5, 16, 21),
-                sources: [
-                  { title: 'Vue 최적화 가이드', url: '#' },
-                  { title: '성능 모니터링 도구', url: '#' }
-                ]
-              }
-            ]
-          }
-        ]
+        chatHistories: []
       }
     },
     methods: {
       toggleSidebar() {
         this.sidebarOpen = !this.sidebarOpen;
+
+        if (this.sidebarOpen) {
+          this.fetchChatHistoriesFromServer();
+        }
       },
-      
+
       sendMessage() {
         if (this.userInput.trim() === '') return;
         
@@ -456,7 +394,35 @@
           // 실제 앱에서는 localStorage나 서버에 저장하는 코드가 추가되어야 함
           // localStorage.setItem('chatHistories', JSON.stringify(this.chatHistories));
         }
+      },
+
+      fetchChatHistoriesFromServer() {
+        axios.get("http://localhost:8000/chat/histories")
+          .then(res => {
+            const serverHistories = res.data.histories;
+
+            this.chatHistories = serverHistories.map((history, idx) => {
+              const question = history.query;
+              const answer = history.messages.find(msg => msg.type === 'AIMessage')?.content || '';
+
+              return {
+                id: Date.now() + idx,
+                title: question.length > 20 ? question.slice(0, 20) + '...' : question,
+                date: new Date(),  // 서버 날짜가 없으므로 현재 시간
+                preview: answer.length > 40 ? answer.slice(0, 40) + '...' : answer,
+                messages: history.messages.map(msg => ({
+                  isUser: msg.type === 'HumanMessage',
+                  text: msg.content,
+                  time: new Date()
+                }))
+              };
+            });
+          })
+          .catch(err => {
+            console.error("✅ 대화 기록 불러오기 실패:", err);
+          });
       }
+
     },
     mounted() {
       // 자동으로 입력창에 포커스
