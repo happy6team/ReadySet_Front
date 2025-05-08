@@ -18,36 +18,37 @@
     
     <nav class="sidebar-nav">
       <ul>
-        <li class="active">
+        <li :class="{ active: route.path === '/' }">
           <router-link to="/">
             <i class="fas fa-home"></i>
             <span>대시보드</span>
           </router-link>
         </li>
-        <li>
+        <li :class="{ active: route.path === '/chatbot' }">
           <router-link to="/chatbot">
             <i class="fas fa-comments"></i>
             <span>AI 챗봇</span>
           </router-link>
         </li>
-        <li>
-          <router-link to="/meetings">
+        <li :class="{ active: route.path === '/meeting' }">
+          <router-link to="/meeting">
             <i class="fas fa-microphone"></i>
             <span>회의록 관리</span>
           </router-link>
         </li>
-        <li>
+        <li :class="{ active: route.path === '/documents' }">
           <router-link to="/documents">
             <i class="fas fa-file-alt"></i>
             <span>문서 관리</span>
           </router-link>
         </li>
-        <li>
+        <li :class="{ active: route.path === '/team' }">
           <router-link to="/team">
             <i class="fas fa-users"></i>
             <span>팀 커뮤니티</span>
           </router-link>
         </li>
+
       </ul>
     </nav>
     
@@ -64,16 +65,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SideBar',
-  props: {
-    isOpen: {
-      type: Boolean,
-      default: true
-    }
+<script setup>
+import { useRoute } from 'vue-router';
+const route = useRoute();
+
+defineProps({
+  isOpen: {
+    type: Boolean,
+    default: true
   }
-}
+});
 </script>
 
 <style scoped>
