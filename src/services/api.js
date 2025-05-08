@@ -19,7 +19,7 @@ export const sendChatMessage = async (message) => {
   const formData = new FormData();
   formData.append('input_query', message.trim());
 
-  // API 요청 전송
+  // API 요청 전송git config --global pull.rebase false
   const response = await apiClient.post('/chat', formData);
   return response.data;
 };
