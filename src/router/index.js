@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Dashboard from '../views/Dashboard.vue';
 import Chatbot from '../views/Chatbot.vue';
 import Meeting from '../views/Meeting.vue';
+import ReportView from '../views/ReportView.vue';
+
 
 const routes = [
   {
@@ -17,6 +19,11 @@ const routes = [
   { path: '/meeting', 
     name: 'Meeting', 
     component: Meeting 
+  },
+  {
+    path: '/documents',             
+    name: 'Documents',
+    component: ReportView
   },
 
   // 다른 라우트 설정...

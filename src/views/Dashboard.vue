@@ -152,6 +152,10 @@ const chatbot = () => {
 const meetings = () => {
   router.push('/meeting');
 };
+
+const goToReports = () => {
+  router.push('/reports');
+};
 </script>
 
 
