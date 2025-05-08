@@ -173,7 +173,7 @@
     
 <script setup>
 import { ref, nextTick, onMounted, watch } from 'vue';
-import { sendChatMessage, getChatHistories } from '@/services/api';
+import { sendChatMessage, getChatHistories } from '@/api/api';
 
 
 // 반응형 상태 정의
@@ -415,8 +415,8 @@ const deleteHistory = (index) => {
 // 서버에서 대화 기록 가져오기
 const fetchChatHistoriesFromServer = async () => {
   try {
-    const response = await apiService.getChatHistories();
-    const serverHistories = response.data.histories;
+    const data = await getChatHistories();
+    const serverHistories = data.histories;
 
     chatHistories.value = serverHistories.map((history, idx) => {
       const question = history.query;
