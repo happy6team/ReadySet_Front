@@ -67,7 +67,7 @@
           </div>
         </div>
         
-        <div class="action-card" @click="navigateTo('/meetings')">
+        <div class="action-card" @click="meetings()">
           <div class="action-icon meeting-icon">
             <i class="fas fa-microphone"></i>
           </div>
@@ -150,7 +150,7 @@ const chatbot = () => {
 };
 
 const meetings = () => {
-  router.push('/meetings');
+  router.push('/meeting');
 };
 </script>
 
