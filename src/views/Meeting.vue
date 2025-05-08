@@ -23,7 +23,11 @@
       </div>
   
       <!-- 요약 결과 -->
-      <div v-if="summary" class="section">
+      <div v-if="loading" class="section loading">
+        <h3>⏳ 요약 중입니다...</h3> <h3>파일의 길이에 따라 수 분 까지 소요됩니다.</h3>
+      </div>
+
+      <div v-else-if="summary" class="section">
         <h3>📋 요약 결과</h3>
         <p>{{ summary }}</p>
       </div>
@@ -31,27 +35,69 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
+  import { uploadAudioFile, summarizeAudio, summarizeText } from '@/api/meeting';
   
-  const mode = ref('audio'); // 'audio' 또는 'text'
+  const mode = ref('audio');
   const file = ref(null);
   const inputText = ref('');
   const summary = ref('');
+  const loading = ref(false);
   
+  watch(mode, () => {
+    summary.value = '';
+    inputText.value = '';   
+    file.value = null;    
+  });
+
   const handleFileUpload = (event) => {
     file.value = event.target.files[0];
   };
   
-  const submitAudio = () => {
-    console.log('음성 요약 요청됨:', file.value);
-    summary.value = '🎧 예시 요약 결과 (음성 업로드)';
+  const submitAudio = async () => {
+    if (!file.value) {
+        alert("파일을 먼저 선택해주세요.");
+        return;
+    }
+
+    try {
+        loading.value = true;
+        const uploadRes = await uploadAudioFile(file.value);
+        const fileId = uploadRes.file_id;
+        const summaryRes = await summarizeAudio(fileId);
+        summary.value = summaryRes.transcription;
+    } catch (error) {
+        console.error("❌ 음성 요약 오류:", error);
+        alert("음성 요약 중 오류가 발생했습니다.");
+    } finally {
+        loading.value = false;
+    }
   };
-  
-  const submitText = () => {
-    console.log('텍스트 요약 요청됨:', inputText.value);
-    summary.value = '📝 예시 요약 결과 (텍스트 입력)';
-  };
+
+  const submitText = async () => {
+    if (!inputText.value.trim()) {
+        alert("텍스트를 입력해주세요.");
+        return;
+    }
+
+    console.log("🟡 submitText 실행됨");
+    
+    try {
+        loading.value = true;
+        const summaryRes = await summarizeText(inputText.value);
+        console.log("🟢 요약 성공:", summaryRes);
+        summary.value = summaryRes.summary;
+    } catch (error) {
+        console.error("❌ 텍스트 요약 오류:", error);
+        alert("텍스트 요약 중 오류가 발생했습니다.");
+    } finally {
+        loading.value = false;
+    }
+};
+
+
   </script>
+  
   
   <style scoped>
   .meeting-page {
@@ -148,5 +194,29 @@
     color: #444;
     line-height: 1.6;
   }
+  .loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #4b5563;
+  }
+
+  .loading::after {
+    content: '';
+    display: block;
+    margin: 20px auto;
+    width: 36px;
+    height: 36px;
+    border: 4px solid #ccc;
+    border-top-color: #60a5fa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+  }
+
   </style>
   
