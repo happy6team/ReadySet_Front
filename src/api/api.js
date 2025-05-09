@@ -5,7 +5,7 @@ const BASE_URL = 'http://localhost:8000';
 // API 클라이언트 인스턴스 생성 (기본 설정)
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000
+  timeout: 120000
 });
 
 // 채팅 메시지 전송 (FormData 사용)

@@ -304,9 +304,12 @@ const formatDate = (date) => {
 
 // 메시지 형식 지정 (마크다운/코드 처리)
 const formatMessage = (text) => {
-  // 실제로는 마크다운이나 코드 하이라이팅 라이브러리 사용 권장
-  return text;
+  if (!text) return '';
+  return text
+    .replace(/\n/g, '<br/>')                            // 줄바꿈 처리
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');  // **볼드체** 처리
 };
+
 
 // 질문 적용
 const applyQuestion = (question) => {
