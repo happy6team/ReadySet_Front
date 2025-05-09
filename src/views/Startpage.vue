@@ -18,8 +18,8 @@
           </div>
           
           <div class="start-header">
-            <h1>신입사원 온보딩 AI 플랫폼</h1>
-            <p>AI 멘토링으로 빠르게 적응하고 실무 역량을 키워보세요</p>
+            <h1>ReadySet</h1>
+            <p>AI 사수가 곁에서 이끌어주는 온보딩 멘토링 시스템</p>
           </div>
           
           <div class="form-container">
