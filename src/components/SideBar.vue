@@ -2,7 +2,7 @@
   <div class="sidebar" :class="{ 'open': isOpen }">
     <div class="sidebar-header">
       <div class="logo">
-        <h2>TeamFit</h2>
+        <h2>ReadySet</h2>
       </div>
     </div>
     
