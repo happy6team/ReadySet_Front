@@ -45,6 +45,13 @@
 
       </ul>
     </nav>
+
+    <div class="logout-section">
+      <button class="logout-btn" @click="logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>로그아웃</span>
+      </button>
+    </div>
     
     <div class="sidebar-footer">
       <button class="settings-btn">
@@ -60,8 +67,9 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter} from 'vue-router';
 const route = useRoute();
+const router = useRouter();
 
 defineProps({
   isOpen: {
@@ -69,6 +77,11 @@ defineProps({
     default: true
   }
 });
+
+function logout() {
+  localStorage.clear();  // 사용자 정보 초기화 (필요 시)
+  router.push('/');      // startpage로 이동
+}
 </script>
 
 <style scoped>
@@ -274,4 +287,34 @@ defineProps({
     font-size: 1.2rem;
   }
 }
+
+.logout-section {
+    padding: 0 20px 10px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    background: #FFECEC;
+    border: none;
+    border-radius: 6px;
+    color: #D9534F;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    justify-content: center;
+  }
+
+  .logout-btn:hover {
+    background: #F8D7DA;
+    color: #C9302C;
+  }
+
+  .logout-btn i {
+    margin-right: 8px;
+    font-size: 0.95rem;
+  }
 </style>
