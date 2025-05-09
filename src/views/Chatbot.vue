@@ -124,21 +124,24 @@
                   <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
                   <span class="message-time">{{ formatTime(message.time) }}</span>
                 </div>
+
                 <div class="message-text" v-html="formatMessage(message.text)"></div>
+
+                <!-- 기존 출처 (웹 링크 등) -->
                 <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
-                  <span class="sources-label">출처:</span>
-                  <div class="source-list">
-                    <a 
-                      v-for="(source, sourceIndex) in message.sources" 
-                      :key="sourceIndex" 
-                      :href="source.url" 
-                      target="_blank" 
-                      class="source-item"
-                    >
-                      {{ source.title }}
-                    </a>
+                    <span class="sources-label">출처:</span>
+                    <div class="source-list">
+                      <button 
+                        v-for="(source, sourceIndex) in [...message.sources].sort((a, b) => a.rank - b.rank)" 
+                        :key="sourceIndex" 
+                        class="source-item"
+                        @click="download(source.source)"
+                      >
+                        {{ source.rank }}위 📄 {{ source.filename }}
+                      </button>
+                    </div>
                   </div>
-                </div>
+
               </div>
             </div>
           </template>
@@ -174,7 +177,7 @@
 <script setup>
 import { ref, nextTick, onMounted, watch } from 'vue';
 import { sendChatMessage, getChatHistories } from '@/api/api';
-
+import { downloadReport } from '@/api/reports';
 
 // 반응형 상태 정의
 const userInput = ref('');
@@ -441,6 +444,17 @@ const fetchChatHistoriesFromServer = async () => {
     console.error("✅ 대화 기록 불러오기 실패:", err);
   }
 };
+
+// 출처 다운로드
+const download = async (source) => {
+  try {
+    await downloadReport(source);
+  } catch (err) {
+    console.error('❌ 파일 다운로드 실패:', err);
+    alert('파일 다운로드 중 오류가 발생했습니다.');
+  }
+};
+
 
 // userInput이 변경될 때마다 높이 조절
 watch(userInput, () => {
