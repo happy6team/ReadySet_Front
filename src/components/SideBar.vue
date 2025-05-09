@@ -18,8 +18,8 @@
     
     <nav class="sidebar-nav">
       <ul>
-        <li :class="{ active: route.path === '/' }">
-          <router-link to="/">
+        <li :class="{ active: route.path === '/dashboard' }">
+          <router-link to="/dashboard">
             <i class="fas fa-home"></i>
             <span>대시보드</span>
           </router-link>
@@ -36,16 +36,10 @@
             <span>회의록 관리</span>
           </router-link>
         </li>
-        <li :class="{ active: route.path === '/documents' }">
-          <router-link to="/documents">
+        <li :class="{ active: route.path === '/report' }">
+          <router-link to="/report">
             <i class="fas fa-file-alt"></i>
             <span>문서 관리</span>
-          </router-link>
-        </li>
-        <li :class="{ active: route.path === '/team' }">
-          <router-link to="/team">
-            <i class="fas fa-users"></i>
-            <span>팀 커뮤니티</span>
           </router-link>
         </li>
 

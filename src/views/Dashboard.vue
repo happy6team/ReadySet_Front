@@ -4,19 +4,9 @@
       <div class="welcome-card">
         <div class="welcome-content">
           <h2>환영합니다, 김신입님! 👋</h2>
-          <p>AI 멘토링 시스템을 통해 신속하게 팀에 적응하고 실무 역량을 키워보세요.</p>
-          <div class="action-buttons">
-            <button class="primary-btn">
-              <i class="fas fa-play-circle"></i>
-              시작하기
-            </button>
-            <button class="secondary-btn">
-              <i class="fas fa-book"></i>
-              가이드 보기
-            </button>
-          </div>
+          <p>AI 사수가 실시간으로 곁에서 이끌어주어 신입사원의 첫 실무 경험을 든든하게 지원합니다.</p>
+          <!-- 버튼 제거함 -->
         </div>
-
       </div>
     </div>
     
@@ -24,28 +14,33 @@
       <div class="project-card">
         <div class="project-header">
           <div class="project-icon">
-            <i class="fas fa-rocket"></i>
+            <img src="/support.png" alt="프로젝트" class="project-image" />
           </div>
           <div class="project-title">
-            <h3>신입사원 온보딩 AI 플랫폼 프로젝트</h3>
+            <h3>차세대 한국형 스마트팜 개발 프로젝트</h3>
             <span class="project-badge">진행중</span>
           </div>
         </div>
         <div class="project-content">
-          <p>당신은 현재 <span class="highlight">신입사원 온보딩 지원 AI 플랫폼</span> 프로젝트에 배정되었습니다.<br> 이 프로젝트는 신입사원이 팀 프로젝트에 빠르게 적응하고 실무에 즉시 투입될 수 있도록 AI 기반 실시간 사수 멘토링 시스템을 구축하는 것을 목표로 합니다.</p>
+          <p>당신은 현재 <span class="highlight">차세대 한국형 스마트팜 개발</span> 프로젝트에 배정되었습니다.<br> 이 프로젝트는 고령화·노동력 부족 해결을 위해 IoT·빅데이터·AI·로봇 융합으로 생육 환경 최적화 및 생산성 향상으로 농가 소득 증대와 수출 기반 마련을 목표로 합니다.</p>
           <div class="project-stats">
             <div class="stat-item">
-              <div class="stat-value">14</div>
-              <div class="stat-label">팀원</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">32</div>
-              <div class="stat-label">일차</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">67%</div>
-              <div class="stat-label">진행률</div>
-            </div>
+  <div class="stat-value">도메인 용어 설명</div>
+  <div class="stat-label">익숙하지 않은 용어, 쉽게 풀어 알려드려요.</div>
+</div>
+<div class="stat-item">
+  <div class="stat-value">회의록 자동 생성</div>
+  <div class="stat-label">음성 회의를 텍스트로 자동 정리해 드려요.</div>
+</div>
+<div class="stat-item">
+  <div class="stat-value">코드 검수 서비스</div>
+  <div class="stat-label">코드가 요구사항에 맞는지 확인해 드려요.</div>
+</div>
+<div class="stat-item">
+  <div class="stat-value">담당자 매칭</div>
+  <div class="stat-label">질문에 맞는 담당자를 바로 연결해요.</div>
+</div>
+
           </div>
         </div>
       </div>
@@ -54,30 +49,26 @@
     <div class="quick-actions">
       <h3>빠른 실행 메뉴 ⚡</h3>
       <div class="action-cards">
-        <div class="action-card" @click="chatbot()">
+        <div class="action-card enhanced" @click="chatbot()">
           <div class="action-icon">
-            <i class="fas fa-comments"></i>
+            <img src="/chatbot.png" alt="AI 챗봇" class="icon-image" />
           </div>
           <div class="action-info">
             <h4>AI 챗봇</h4>
             <p>질문하고 즉시 답변받기</p>
           </div>
-          <div class="action-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
+          <!-- 동그라미 화살표 제거함 -->
         </div>
         
-        <div class="action-card" @click="meetings()">
+        <div class="action-card enhanced" @click="meetings()">
           <div class="action-icon meeting-icon">
-            <i class="fas fa-microphone"></i>
+            <img src="/report.png" alt="회의록 생성" class="icon-image" />
           </div>
           <div class="action-info">
             <h4>회의록 생성</h4>
             <p>음성 회의 기록 및 요약</p>
           </div>
-          <div class="action-arrow">
-            <i class="fas fa-arrow-right"></i>
-          </div>
+          <!-- 동그라미 화살표 제거함 -->
         </div>
       </div>
     </div>
@@ -86,13 +77,9 @@
       <div class="dashboard-section full-width">
         <div class="section-header">
           <h3>최근 활동 🕒</h3>
-          <button class="view-all">전체보기 <i class="fas fa-chevron-right"></i></button>
         </div>
         <div class="activity-list">
           <div class="activity-item">
-            <div class="activity-icon">
-              <i class="fas fa-comment-alt"></i>
-            </div>
             <div class="activity-content">
               <h4>"프론트엔드 API 연동 방법" 질문에 답변 받음</h4>
               <p>10분 전</p>
@@ -101,9 +88,6 @@
           </div>
           
           <div class="activity-item">
-            <div class="activity-icon">
-              <i class="fas fa-file-download"></i>
-            </div>
             <div class="activity-content">
               <h4>"프로젝트 가이드라인" 문서 다운로드</h4>
               <p>2시간 전</p>
@@ -112,9 +96,6 @@
           </div>
           
           <div class="activity-item">
-            <div class="activity-icon">
-              <i class="fas fa-clipboard-list"></i>
-            </div>
             <div class="activity-content">
               <h4>"주간 팀 미팅" 회의록 요약 생성</h4>
               <p>어제</p>
@@ -123,9 +104,6 @@
           </div>
           
           <div class="activity-item">
-            <div class="activity-icon">
-              <i class="fas fa-code"></i>
-            </div>
             <div class="activity-content">
               <h4>"Vue 컴포넌트 최적화" 문서 검토</h4>
               <p>2일 전</p>
@@ -206,12 +184,13 @@ const goToReports = () => {
 }
 
 .welcome-content {
-  flex: 0 0 60%;
+  flex: 0 0 100%; /* 버튼 제거하면서 너비 확장 */
   z-index: 2;
+  text-align: center; /* 텍스트 중앙 정렬 */
 }
 
 .welcome-content h2 {
-  font-size: 2.2rem;
+  font-size: 2.5rem; /* 조금 더 크게 */
   margin-bottom: 20px;
   color: #ffffff;
   font-weight: 700;
@@ -219,85 +198,15 @@ const goToReports = () => {
 }
 
 .welcome-content p {
-  font-size: 1.1rem;
+  font-size: 1.2rem; /* 조금 더 크게 */
   color: #ffffff;
-  margin-bottom: 30px;
+  margin-bottom: 10px; /* 버튼 제거로 마진 줄임 */
   line-height: 1.7;
   opacity: 0.95;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.action-buttons {
-  display: flex;
-  gap: 20px;
-}
-
-.primary-btn, .secondary-btn {
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.primary-btn {
-  background-color: #ffffff;
-  color: #7aa7c7;
-  border: none;
-}
-
-.primary-btn:hover {
-  background-color: #f8f8f8;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.secondary-btn {
-  background-color: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  backdrop-filter: blur(5px);
-}
-
-.secondary-btn:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.primary-btn i, .secondary-btn i {
-  margin-right: 12px;
-  font-size: 1.2rem;
-}
-
-.welcome-image {
-  flex: 0 0 35%;
-  max-height: 250px;
-  z-index: 2;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.welcome-image img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  max-width: 800px; /* 너무 넓지 않게 제한 */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 프로젝트 소개 섹션 */
@@ -327,20 +236,20 @@ const goToReports = () => {
 }
 
 .project-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #f7d8d4, #f5a5a5);
-  border-radius: 15px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 20px;
-  box-shadow: 0 5px 15px rgba(245, 165, 165, 0.2);
+  overflow: hidden;
 }
 
-.project-icon i {
-  font-size: 1.8rem;
-  color: white;
+.project-icon .project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 .project-title {
@@ -396,11 +305,12 @@ const goToReports = () => {
 
 .project-stats {
   display: flex;
-  justify-content: start;
+  justify-content: center; /* 가운데 정렬로 변경 */
   gap: 30px;
   padding-top: 10px;
   margin-top: 20px;
   border-top: 1px dashed rgba(122, 167, 199, 0.3);
+  flex-wrap: wrap; /* 화면 크기에 따라 여러 줄로 표시되도록 설정 */
 }
 
 .stat-item {
@@ -409,6 +319,8 @@ const goToReports = () => {
   padding: 15px 25px;
   border-radius: 12px;
   transition: all 0.3s ease;
+  flex: 0 0 calc(25% - 30px); /* 4개 아이템 균등하게 배치 (갭 고려) */
+  min-width: 200px; /* 최소 너비 설정 */
 }
 
 .stat-item:hover {
@@ -417,7 +329,7 @@ const goToReports = () => {
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.2rem; /* 크기 조정 */
   font-weight: 700;
   color: #7aa7c7;
   margin-bottom: 5px;
@@ -429,27 +341,29 @@ const goToReports = () => {
   font-weight: 500;
 }
 
-/* 빠른 실행 메뉴 섹션 */
+/* 빠른 실행 메뉴 섹션 - 강화됨 */
 .quick-actions {
   margin-bottom: 40px;
 }
 
 .quick-actions h3 {
-  font-size: 1.5rem;
+  font-size: 1.8rem; /* 더 크게 변경 */
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* 더 넓게 */
   color: #333333;
   position: relative;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
+  text-align: center; /* 중앙 정렬 */
 }
 
 .quick-actions h3::after {
   content: '';
   position: absolute;
-  left: 0;
+  left: 50%; /* 중앙으로 이동 */
+  transform: translateX(-50%); /* 중앙 정렬 보정 */
   bottom: 0;
-  height: 3px;
-  width: 60px;
+  height: 4px; /* 조금 더 두껍게 */
+  width: 100px; /* 더 넓게 */
   background: linear-gradient(90deg, #a5c8e1, #7aa7c7);
   border-radius: 2px;
 }
@@ -458,124 +372,97 @@ const goToReports = () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
+  margin-bottom: 20px;
 }
 
-.action-card {
+/* 액션 카드 강화 */
+.action-card.enhanced {
   background-color: #ffffff;
   border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 35px; /* 패딩 증가 */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); /* 그림자 강화 */
   display: flex;
   align-items: center;
   cursor: pointer;
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(165, 200, 225, 0.2);
+  border: 2px solid rgba(165, 200, 225, 0.3); /* 테두리 두껍게 */
+  min-height: 150px; /* 최소 높이 설정 */
 }
 
-.action-card:first-child {
-  background: linear-gradient(45deg, rgba(165, 200, 225, 0.1), rgba(165, 200, 225, 0.05));
+.action-card.enhanced:first-child {
+  background: linear-gradient(45deg, rgba(165, 200, 225, 0.15), rgba(165, 200, 225, 0.05));
 }
 
-.action-card:nth-child(2) {
-  background: linear-gradient(45deg, rgba(247, 216, 212, 0.1), rgba(247, 216, 212, 0.05));
+.action-card.enhanced:nth-child(2) {
+  background: linear-gradient(45deg, rgba(247, 216, 212, 0.15), rgba(247, 216, 212, 0.05));
 }
 
-.action-card::before {
+.action-card.enhanced::before {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 4px;
+  width: 6px; /* 더 두껍게 */
   height: 0;
   background: linear-gradient(to top, #a5c8e1, #7aa7c7);
   transition: height 0.4s ease;
 }
 
-.action-card:nth-child(2)::before {
+.action-card.enhanced:nth-child(2)::before {
   background: linear-gradient(to top, #f7d8d4, #f5a5a5);
 }
 
-.action-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  border-color: rgba(165, 200, 225, 0.4);
+.action-card.enhanced:hover {
+  transform: translateY(-10px) scale(1.03); /* 더 크게 움직임 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* 더 강한 그림자 */
+  border-color: rgba(165, 200, 225, 0.6);
 }
 
-.action-card:hover::before {
+.action-card.enhanced:hover::before {
   height: 100%;
 }
 
-.action-icon {
-  width: 65px;
-  height: 65px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #a5c8e1, #7aa7c7);
+.action-card.enhanced .action-icon {
+  width: 80px; /* 더 크게 */
+  height: 80px; /* 더 크게 */
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 20px;
-  box-shadow: 0 8px 15px rgba(122, 167, 199, 0.25);
+  margin-right: 25px; /* 더 많은 여백 */
   transition: all 0.3s ease;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
-.meeting-icon {
-  background: linear-gradient(135deg, #f7d8d4, #f5a5a5);
-  box-shadow: 0 8px 15px rgba(245, 165, 165, 0.25);
+.action-card.enhanced:hover .action-icon {
+  transform: scale(1.15) rotate(8deg); /* 더 크게 회전 */
 }
 
-.action-card:hover .action-icon {
-  transform: scale(1.1) rotate(5deg);
+.action-card.enhanced .action-icon .icon-image {
+  width: 90%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
-.action-icon i {
-  font-size: 1.8rem;
-  color: white;
-}
-
-.action-info {
+.action-card.enhanced .action-info {
   flex: 1;
 }
 
-.action-info h4 {
-  font-size: 1.3rem;
+.action-card.enhanced .action-info h4 {
+  font-size: 1.5rem; /* 더 크게 */
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #333333;
 }
 
-.action-info p {
-  font-size: 0.95rem;
+.action-card.enhanced .action-info p {
+  font-size: 1.1rem; /* 더 크게 */
   color: #666666;
   line-height: 1.5;
-}
-
-.action-arrow {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7aa7c7;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-  opacity: 0.7;
-}
-
-.action-card:nth-child(2) .action-arrow {
-  color: #f5a5a5;
-}
-
-.action-card:hover .action-arrow {
-  background-color: white;
-  transform: translateX(5px);
-  opacity: 1;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* 최근 활동 섹션 */
@@ -636,20 +523,6 @@ const goToReports = () => {
   border-radius: 20px;
 }
 
-.view-all:hover {
-  background-color: rgba(165, 200, 225, 0.1);
-  color: #7aa7c7;
-}
-
-.view-all i {
-  margin-left: 5px;
-  font-size: 0.8rem;
-  transition: transform 0.3s ease;
-}
-
-.view-all:hover i {
-  transform: translateX(3px);
-}
 
 .activity-list {
   display: grid;
@@ -658,8 +531,6 @@ const goToReports = () => {
 }
 
 .activity-item {
-  display: flex;
-  align-items: center;
   padding: 20px;
   border-radius: 15px;
   background-color: rgba(248, 250, 252, 0.7);
@@ -673,29 +544,6 @@ const goToReports = () => {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   background-color: white;
   border-color: rgba(165, 200, 225, 0.3);
-}
-
-.activity-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #a5c8e1, #7aa7c7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20px;
-  box-shadow: 0 5px 10px rgba(122, 167, 199, 0.2);
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.activity-item:hover .activity-icon {
-  transform: scale(1.1);
-}
-
-.activity-icon i {
-  font-size: 1.3rem;
-  color: white;
 }
 
 .activity-content {
@@ -751,6 +599,10 @@ const goToReports = () => {
   .activity-list {
     grid-template-columns: 1fr;
   }
+  
+  .project-stats {
+    gap: 20px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -773,15 +625,6 @@ const goToReports = () => {
     font-size: 1rem;
   }
   
-  .action-buttons {
-    justify-content: center;
-  }
-  
-  .welcome-image {
-    flex: 1 1 auto;
-    margin-top: 20px;
-  }
-  
   .action-cards {
     grid-template-columns: 1fr;
   }
@@ -790,6 +633,11 @@ const goToReports = () => {
     flex-direction: column;
     gap: 15px;
   }
+  
+  .stat-item {
+    min-width: unset;
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -797,18 +645,19 @@ const goToReports = () => {
     padding: 20px 15px;
   }
   
-  .primary-btn, .secondary-btn {
-    padding: 12px 20px;
-    font-size: 0.9rem;
+  .action-card.enhanced {
+    padding: 25px 20px;
   }
   
-  .action-icon {
-    width: 50px;
-    height: 50px;
+  .action-card.enhanced .action-icon {
+    width: 60px;
+    height: 60px;
   }
-  
-  .action-icon i {
-    font-size: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .action-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>

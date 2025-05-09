@@ -1,7 +1,18 @@
 <template>
   <div class="app-container">
-    <SideBar :isOpen="sidebarOpen" @toggle="toggleSidebar" />
-    <div class="main-content" :class="{ 'sidebar-open': sidebarOpen }">
+    <!-- 현재 라우트의 경로가 /start가 아닐 때만 SideBar 렌더링 -->
+    <SideBar 
+      v-if="$route.path !== '/'" 
+      :isOpen="sidebarOpen" 
+      @toggle="toggleSidebar" 
+    />
+    <div 
+      class="main-content" 
+      :class="{ 
+        'sidebar-open': sidebarOpen && $route.path !== '/',
+        'full-width': $route.path === '/' 
+      }"
+    >
       <router-view />
     </div>
   </div>
@@ -14,7 +25,6 @@ export default {
   name: 'App',
   components: {
     SideBar,
-    // TopNavBar는 주석 처리되어 있음
   },
   data() {
     return {
@@ -70,6 +80,11 @@ body {
 
 .main-content.sidebar-open {
   margin-left: 250px;
+}
+
+/* 사이드바 없을 때 전체 너비 사용하도록 추가 */
+.main-content.full-width {
+  margin-left: 0;
 }
 
 @media (max-width: 768px) {
