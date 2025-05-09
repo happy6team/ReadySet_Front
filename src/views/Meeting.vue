@@ -29,7 +29,7 @@
 
       <div v-else-if="summary" class="section">
         <h3>📋 요약 결과</h3>
-        <p>{{ summary }}</p>
+        <div v-html="summary.replace(/\n/g, '<br/>')"></div>
       </div>
     </div>
   </template>
@@ -65,7 +65,7 @@
         const uploadRes = await uploadAudioFile(file.value);
         const fileId = uploadRes.file_id;
         const summaryRes = await summarizeAudio(fileId);
-        summary.value = summaryRes.transcription;
+        summary.value = summaryRes.summary;
     } catch (error) {
         console.error("❌ 음성 요약 오류:", error);
         alert("음성 요약 중 오류가 발생했습니다.");
