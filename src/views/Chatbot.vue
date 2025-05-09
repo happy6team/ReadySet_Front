@@ -565,6 +565,15 @@ watch(userInput, () => {
   nextTick(adjustTextareaHeight);
 });
 
+// isLoading이 true로 바뀔 때마다 스크롤을 맨 아래로 이동
+watch(isLoading, (val) => {
+  if (val) {
+    nextTick(() => {
+      scrollToBottom();
+    });
+  }
+});
+
 // 컴포넌트 마운트 시 실행
 onMounted(() => {
   // 자동으로 입력창에 포커스
