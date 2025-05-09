@@ -163,9 +163,7 @@
             :class="{ 'active': userInput.trim().length > 0 }" 
             @click="sendMessage"
             :disabled="userInput.trim().length === 0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-              <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
-            </svg>
+            <img src="/send.png" alt="전송" class="send-icon"/>
           </button>
         </div>
       </div>
@@ -286,7 +284,7 @@ const scrollToBottom = () => {
 // 텍스트 영역 높이 조절
 const adjustTextareaHeight = () => {
   if (chatInput.value) {
-    chatInput.value.style.height = 'auto';
+    chatInput.value.style.height = '0px';
     chatInput.value.style.height = chatInput.value.scrollHeight + 'px';
   }
 };
@@ -961,7 +959,7 @@ onMounted(() => {
   
 .message-content {
   flex: 1;
-  max-width: calc(100% - 60px);
+  max-width: calc(100% - 110px);
   position: relative;
 }
   
@@ -1097,6 +1095,13 @@ onMounted(() => {
   color: var(--pastel-blue-500);
   transform: scale(1.1);
 }
+.user-message {
+  flex-direction: row-reverse;
+}
+.user-message .message-avatar {
+  margin-left: 12px;
+  margin-right: 0;
+}
   
 .user-message .message-content {
   background: linear-gradient(to right, #f0f7ff, #eef2ff);
@@ -1120,7 +1125,6 @@ onMounted(() => {
   border-bottom: none;
 }
 
-  
 .bot-message .message-content {
   background: white;
   padding: 16px 20px;
@@ -1241,6 +1245,11 @@ onMounted(() => {
   cursor: not-allowed;
   opacity: 0.7;
 }
+.send-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
   
 /* 반응형 스타일 */
 @media (max-width: 768px) {
@@ -1273,18 +1282,6 @@ onMounted(() => {
     height: 36px;
   }
     
-  .message-content {
-    max-width: calc(100% - 50px);
-  }
-}
-  
-/* 사용자 정의 변수: 파스텔 블루 테마 */
-:root {
-  --pastel-blue-100: #e0f2fe;
-  --pastel-blue-200: #bae6fd;
-  --pastel-blue-300: #93c5fd;
-  --pastel-blue-400: #60a5fa;
-  --pastel-blue-500: #3b82f6;
 }
   
 /* 애니메이션 효과 */
