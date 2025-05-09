@@ -101,33 +101,33 @@
               </button>
             </div>
           </div>
-          
-          <!-- 메시지 표시 영역 -->
+
+
           <template v-else>
-            <div 
-              v-for="(message, index) in messages" 
-              :key="index" 
-              class="message"
-              :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
-            >
-              <div class="message-avatar">
-                <div class="avatar-image" :class="{ 'user-avatar': message.isUser, 'bot-avatar': !message.isUser }">
-                  <!-- 사용자 아바타 이미지 -->
-                  <img v-if="message.isUser" :src="userAvatarImage" alt="사용자" class="avatar-img" />
-                  <!-- 봇 아바타 이미지 -->
-                  <img v-else :src="botAvatarImage" alt="AI 봇" class="avatar-img" />
-                </div>
-              </div>
-              <div class="message-content">
-                <div class="message-header">
-                  <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
-                  <span class="message-time">{{ formatTime(message.time) }}</span>
+              <!-- 기존 메시지 출력 -->
+              <div 
+                v-for="(message, index) in messages" 
+                :key="index" 
+                class="message"
+                :class="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
+              >
+                <div class="message-avatar">
+                  <div class="avatar-image" :class="{ 'user-avatar': message.isUser, 'bot-avatar': !message.isUser }">
+                    <img v-if="message.isUser" :src="userAvatarImage" alt="사용자" class="avatar-img" />
+                    <img v-else :src="botAvatarImage" alt="AI 봇" class="avatar-img" />
+                  </div>
                 </div>
 
-                <div class="message-text" v-html="formatMessage(message.text)"></div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-sender">{{ message.isUser ? userName : 'AI 어시스턴트' }}</span>
+                    <span class="message-time">{{ formatTime(message.time) }}</span>
+                  </div>
 
-                <!-- 기존 출처 (웹 링크 등) -->
-                <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
+                  <div class="message-text" v-html="formatMessage(message.text)"></div>
+
+                  <!-- 출처 -->
+                  <div v-if="!message.isUser && message.sources && message.sources.length > 0" class="message-sources">
                     <span class="sources-label">출처:</span>
                     <div class="source-list">
                       <button 
@@ -140,10 +140,28 @@
                       </button>
                     </div>
                   </div>
-
+                </div>
               </div>
-            </div>
-          </template>
+
+              <!-- ✅ 로딩 중인 AI 메시지 -->
+              <div v-if="isLoading" class="message bot-message loading-message">
+                <div class="message-avatar">
+                  <div class="avatar-image bot-avatar">
+                    <img :src="botAvatarImage" alt="AI 봇" class="avatar-img" />
+                  </div>
+                </div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-sender">AI 어시스턴트</span>
+                    <span class="message-time">{{ formatTime(new Date()) }}</span>
+                  </div>
+                  <div class="message-text">
+                    <span class="dot-typing"></span>
+                  </div>
+                </div>
+              </div>
+            </template>
+
         </div>
         
         <!-- 입력 영역 -->
@@ -1292,5 +1310,20 @@ onMounted(() => {
   100% {
     background-position: 200% 0;
   }
+}
+
+/* 로딩 창 스타일 */
+.dot-typing::after {
+  content: '●';
+  animation: dots 1s steps(4, end) infinite;
+  font-size: 1.4rem;
+  color: var(--pastel-blue-500);
+}
+
+@keyframes dots {
+  0% { content: '●'; }
+  33% { content: '●●'; }
+  66% { content: '●●●'; }
+  100% { content: '●'; }
 }
 </style>
