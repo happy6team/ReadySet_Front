@@ -58,23 +58,6 @@
     <div class="chatbot-main-container">
       <!-- 챗봇 헤더 -->
       <div class="chatbot-header">
-        <div class="header-left">
-          <button class="sidebar-toggle" @click="toggleSidebar">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              class="w-5 h-5"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-
         <div class="header-content">
           <div class="header-title-wrapper">
             <h2>AI 챗봇 어시스턴트</h2>
@@ -83,6 +66,12 @@
             프로젝트 관련 질문이나 도움이 필요한 내용을 물어보세요. AI가 즉시
             답변해 드립니다.
           </p>
+          
+          <!-- 사이드바 토글 버튼 -->
+          <button class="sidebar-toggle history-btn" @click="toggleSidebar">
+            <span class="history-icon">🗂️</span>
+            <span class="history-text">이전 대화 기록</span>
+          </button>
         </div>
 
         <div class="header-decoration">
@@ -153,7 +142,7 @@
           </div>
 
           <template v-else>
-            <!-- 기존 메시지 출력 -->
+            <!-- 채팅 메시지 출력 -->
             <div
               v-for="(message, index) in messages"
               :key="index"
@@ -201,7 +190,7 @@
                   v-html="formatMessage(message.text)"
                 ></div>
 
-                <!-- 출처 -->
+                <!-- 출처 정보 -->
                 <div
                   v-if="
                     !message.isUser &&
@@ -227,7 +216,7 @@
               </div>
             </div>
 
-            <!-- ✅ 로딩 중인 AI 메시지 -->
+            <!-- 로딩 중인 AI 메시지 -->
             <div v-if="isLoading" class="message bot-message loading-message">
               <div class="message-avatar">
                 <div class="avatar-image bot-avatar">
@@ -576,6 +565,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 기본 컨테이너 */
 .chatbot-container {
   display: flex;
   height: calc(100vh - 50px);
@@ -592,7 +582,7 @@ onMounted(() => {
   width: 320px;
   height: 100%;
   background-color: white;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); /* 왼쪽으로 그림자 */
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   transition: right 0.3s ease;
   display: flex;
@@ -707,7 +697,6 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -764,36 +753,68 @@ onMounted(() => {
   align-items: center;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
+/* 헤더 내용 */
+.header-content {
+  position: relative;
+  width: 100%;
 }
 
-.sidebar-toggle {
-  background: rgba(255, 255, 255, 0.2);
+.header-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.chatbot-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.5px;
+}
+
+.chatbot-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  max-width: 600px;
+  line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-top: 0;
+}
+
+/* 대화 기록 버튼 스타일 */
+.sidebar-toggle.history-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.25);
   border: none;
   color: white;
-  width: 40px;
-  height: 40px;
+  padding: 8px 16px;
   border-radius: 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
+.sidebar-toggle.history-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.sidebar-toggle svg {
-  width: 24px;
-  height: 24px;
+.history-icon {
+  font-size: 2.2rem;
+}
+
+.history-text {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .header-decoration {
@@ -825,7 +846,7 @@ onMounted(() => {
 .circle-2 {
   width: 80px;
   height: 80px;
-  bottom: -20;
+  bottom: -20px;
   right: 20%;
   background: rgba(255, 255, 255, 0.15);
 }
@@ -836,47 +857,6 @@ onMounted(() => {
   top: 50%;
   right: 30%;
   background: rgba(255, 255, 255, 0.12);
-}
-
-.header-title-wrapper {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.header-icon {
-  background-color: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-.header-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.chatbot-header h2 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: -0.5px;
-}
-
-.chatbot-header p {
-  font-size: 1rem;
-  opacity: 0.9;
-  max-width: 600px;
-  line-height: 1.5;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  margin-top: 0;
 }
 
 /* 메인 채팅 영역 */
@@ -936,15 +916,9 @@ onMounted(() => {
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .empty-chat h3 {
@@ -1001,11 +975,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.4)
-  );
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -1033,14 +1003,8 @@ onMounted(() => {
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .message-avatar {
@@ -1055,14 +1019,13 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  overflow: hidden; /* 추가: 이미지가 경계를 벗어나지 않도록 */
+  overflow: hidden;
 }
 
-/* 이미지 스타일 추가 */
 .avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 이미지 비율 유지하면서 컨테이너 채우기 */
+  object-fit: cover;
 }
 
 .user-avatar {
@@ -1184,41 +1147,11 @@ onMounted(() => {
   transform: translateY(-2px);
 }
 
-.message-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.message-content:hover .message-actions {
-  opacity: 1;
-}
-
-.action-btn {
-  background: none;
-  border: none;
-  color: #888;
-  padding: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-}
-
-.action-btn:hover {
-  background-color: #f0f7ff;
-  color: var(--pastel-blue-500);
-  transform: scale(1.1);
-}
+/* 사용자/봇 메시지 스타일 */
 .user-message {
   flex-direction: row-reverse;
 }
+
 .user-message .message-avatar {
   margin-left: 12px;
   margin-right: 0;
@@ -1227,11 +1160,11 @@ onMounted(() => {
 .user-message .message-content {
   background: linear-gradient(to right, #f0f7ff, #eef2ff);
   padding: 16px 20px;
-  border-radius: 18px 18px 18px 18px;
+  border-radius: 18px;
   box-shadow: 0 3px 10px rgba(96, 165, 250, 0.08);
   border: 1px solid rgba(96, 165, 250, 0.15);
 }
-/* 사용자 메시지(오른쪽) 말풍선 꼬리 */
+
 .user-message .message-content::after {
   content: "";
   position: absolute;
@@ -1239,12 +1172,8 @@ onMounted(() => {
   right: -6px;
   width: 12px;
   height: 12px;
-  background: linear-gradient(
-    to right,
-    #f0f7ff,
-    #eef2ff
-  ); /* 사용자 말풍선 배경색과 동일하게 */
-  border: 1px solid rgba(96, 165, 250, 0.15); /* 사용자 말풍선 테두리와 동일하게 */
+  background: linear-gradient(to right, #f0f7ff, #eef2ff);
+  border: 1px solid rgba(96, 165, 250, 0.15);
   transform: rotate(45deg);
   border-left: none;
   border-bottom: none;
@@ -1253,7 +1182,7 @@ onMounted(() => {
 .bot-message .message-content {
   background: white;
   padding: 16px 20px;
-  border-radius: 18px 18px 18px 18px;
+  border-radius: 18px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0f0f0;
 }
@@ -1272,7 +1201,7 @@ onMounted(() => {
   border-bottom-left-radius: 4px;
 }
 
-/* 입력 영역 스타일 */
+/* 입력 영역 */
 .chat-input-container {
   padding: 20px;
   border-top: 1px solid #f0f0f0;
@@ -1314,40 +1243,13 @@ onMounted(() => {
   border-radius: 16px;
 }
 
-.input-actions {
-  display: flex;
-  padding: 0 10px 12px 0;
-  gap: 6px;
-}
-
-.input-action-btn {
-  background: none;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.input-action-btn:hover {
-  color: var(--pastel-blue-500);
-  background-color: #f0f7ff;
-  transform: scale(1.1);
-}
-
 .send-btn {
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 16px;
   background: #e5e7eb;
   color: #888;
-  border: none;
+  border: 2px solid #0047ab2c;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1370,10 +1272,26 @@ onMounted(() => {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
 .send-icon {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
+}
+
+/* 로딩 창 */
+.dot-typing::after {
+  content: "●";
+  animation: dots 1s steps(4, end) infinite;
+  font-size: 0.8rem;
+  color: var(--pastel-blue-500);
+}
+
+@keyframes dots {
+  0% { content: "●"; }
+  33% { content: "●●"; }
+  66% { content: "●●●"; }
+  100% { content: "●"; }
 }
 
 /* 반응형 스타일 */
@@ -1406,38 +1324,13 @@ onMounted(() => {
     width: 36px;
     height: 36px;
   }
-}
-
-/* 애니메이션 효과 */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
+  
+  .sidebar-toggle.history-btn {
+    padding: 6px 12px;
   }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* 로딩 창 스타일 */
-.dot-typing::after {
-  content: "●";
-  animation: dots 1s steps(4, end) infinite;
-  font-size: 1.4rem;
-  color: var(--pastel-blue-500);
-}
-
-@keyframes dots {
-  0% {
-    content: "●";
-  }
-  33% {
-    content: "●●";
-  }
-  66% {
-    content: "●●●";
-  }
-  100% {
-    content: "●";
+  
+  .history-text {
+    display: none; /* 모바일에서는 아이콘만 표시 */
   }
 }
 </style>
