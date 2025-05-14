@@ -1,16 +1,20 @@
 <template>
   <div class="app-container">
-    <!-- 현재 라우트의 경로가 /start가 아닐 때만 SideBar 렌더링 -->
-    <SideBar 
-      v-if="$route.path !== '/'" 
-      :isOpen="sidebarOpen" 
-      @toggle="toggleSidebar" 
-    />
+    <!-- 사이드바 조건부 렌더링 -->
+    <template v-if="!hideSidebar">
+      <AdminSidebar v-if="isAdminRoute" />
+      <SideBar 
+        v-else 
+        :isOpen="sidebarOpen" 
+        @toggle="toggleSidebar" 
+      />
+    </template>
+
     <div 
       class="main-content" 
       :class="{ 
-        'sidebar-open': sidebarOpen && $route.path !== '/',
-        'full-width': $route.path === '/' 
+        'sidebar-open': sidebarOpen && !isAdminRoute && !hideSidebar,
+        'full-width': hideSidebar 
       }"
     >
       <router-view />
@@ -18,19 +22,33 @@
   </div>
 </template>
 
+
+
 <script>
 import SideBar from './components/SideBar.vue';
+import AdminSidebar from './components/AdminSidebar.vue';
 
 export default {
   name: 'App',
   components: {
     SideBar,
+    AdminSidebar
   },
   data() {
     return {
       sidebarOpen: true,
       userName: '김신입'
     };
+  },
+  computed: {
+    isAdminRoute() {
+      // admin-login은 제외, admin-dashboard 등만 해당
+      return this.$route.path.startsWith('/admin') && this.$route.path !== '/admin-login';
+    },
+    hideSidebar() {
+      // startpage와 admin-login에서는 사이드바를 숨김
+      return this.$route.path === '/' || this.$route.path === '/admin-login';
+    }
   },
   methods: {
     toggleSidebar() {

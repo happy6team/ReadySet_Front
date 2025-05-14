@@ -54,9 +54,17 @@
               <span>시작하기</span>
               <i class="fas fa-arrow-right"></i>
             </button>
+
+            <!-- 관리자 모드 이동 버튼 -->
+            <div class="admin-mode">
+              <button @click="goToAdminLogin">관리자 모드</button>
+            </div>
           </div>
         </div>
       </div>
+
+
+
       
       <div class="footer">
         <p>&copy; 2025 신입사원 온보딩 AI 플랫폼 | <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a></p>
@@ -83,6 +91,10 @@
   function login() {
     // 입력 값에 관계없이 바로 대시보드 페이지로 이동
     router.push('/dashboard');
+  }
+  // 관리자모드로 이동
+  function goToAdminLogin() {
+    router.push('/admin-login');
   }
   
   onMounted(() => {
@@ -529,4 +541,24 @@
       padding: 16px;
     }
   }
+
+  .admin-mode {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .admin-mode button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .admin-mode button:hover {
+    color: white;
+  }
+
   </style>

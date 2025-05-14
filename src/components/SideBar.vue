@@ -36,8 +36,8 @@
             <span>회의록 관리</span>
           </router-link>
         </li>
-        <li :class="{ active: route.path === '/report' }">
-          <router-link to="/report">
+        <li :class="{ active: route.path === '/reports' }">
+          <router-link to="/reports">
             <i class="fas fa-file-alt"></i>
             <span>문서 관리</span>
           </router-link>
