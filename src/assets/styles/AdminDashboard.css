@@ -1,0 +1,395 @@
+.admin-dashboard {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: #f8fafb;
+  }
+  
+  /* 상단 환영 카드 */
+  .welcome-card {
+    background: linear-gradient(135deg, #0047AB, #87CEEB);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(122, 167, 199, 0.25);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  
+  .welcome-card::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    top: -150px;
+    right: -50px;
+  }
+  
+  .welcome-card::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    bottom: -100px;
+    left: 10%;
+  }
+  
+  .welcome-content {
+    z-index: 2;
+    text-align: center;
+  }
+  
+  .welcome-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .welcome-content p {
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.7;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* 매칭 섹션 */
+  .match-section {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(122, 167, 199, 0.15);
+    margin-bottom: 40px;
+    border: 1px solid rgba(165, 200, 225, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .match-section:hover {
+    box-shadow: 0 12px 30px rgba(122, 167, 199, 0.25);
+    border-color: rgba(165, 200, 225, 0.4);
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .section-header h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333333;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .section-header h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 60px;
+    background: linear-gradient(90deg, #a5c8e1, #7aa7c7);
+    border-radius: 2px;
+  }
+  
+  .match-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .department-select {
+    flex: 1;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid rgba(165, 200, 225, 0.4);
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+  }
+  
+  .department-select:focus {
+    outline: none;
+    border-color: #7aa7c7;
+    box-shadow: 0 4px 15px rgba(122, 167, 199, 0.25);
+  }
+  
+  .match-button {
+    background: linear-gradient(135deg, #0047AB, #3a70c0);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(0, 71, 171, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .match-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 71, 171, 0.3);
+    background: linear-gradient(135deg, #0052c2, #4a80d0);
+  }
+  
+  /* 대시보드 섹션 */
+  .dashboard-sections {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .dashboard-section {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+    border: 1px solid rgba(165, 200, 225, 0.2);
+  }
+  
+  .dashboard-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #a5c8e1, #7aa7c7);
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .result-counter {
+    background-color: rgba(165, 200, 225, 0.2);
+    color: #0047AB;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  /* 직원 카드 */
+  .employee-card {
+    background-color: #f9fcff;
+    border-radius: 15px;
+    border: 1px solid rgba(165, 200, 225, 0.3);
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(122, 167, 199, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .employee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(122, 167, 199, 0.25);
+  }
+  
+  .employee-header {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(45deg, rgba(165, 200, 225, 0.2), rgba(165, 200, 225, 0.05));
+    padding: 25px;
+    border-bottom: 1px solid rgba(165, 200, 225, 0.2);
+  }
+  
+  .employee-profile {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0047AB, #87CEEB);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    box-shadow: 0 6px 15px rgba(122, 167, 199, 0.25);
+  }
+  
+  .profile-initial {
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+  
+  .employee-title {
+    flex: 1;
+  }
+  
+  .employee-title h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333333;
+  }
+  
+  .employee-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, #a5c8e1, #7aa7c7);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(122, 167, 199, 0.2);
+  }
+  
+  .employee-content {
+    padding: 30px;
+  }
+  
+  .employee-details {
+    margin-bottom: 30px;
+  }
+  
+  .detail-row {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed rgba(122, 167, 199, 0.3);
+  }
+  
+  .detail-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  
+  .detail-label {
+    width: 120px;
+    font-weight: 700;
+    color: #7aa7c7;
+  }
+  
+  .detail-value {
+    flex: 1;
+    color: #333;
+  }
+  
+  .reason-section {
+    background-color: rgba(165, 200, 225, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border-left: 4px solid #7aa7c7;
+  }
+  
+  .reason-section h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0047AB;
+    margin-bottom: 10px;
+  }
+  
+  .reason-section p {
+    color: #444;
+    line-height: 1.6;
+  }
+  
+  .navigation-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .nav-button {
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-button.prev {
+    background-color: #f1f5f9;
+    color: #555;
+    border: 1px solid #ddd;
+  }
+  
+  .nav-button.next {
+    background: linear-gradient(135deg, #0047AB, #3a70c0);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 71, 171, 0.2);
+  }
+  
+  .nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .nav-button.prev:not(:disabled):hover {
+    background-color: #e1e8f0;
+  }
+  
+  .nav-button.next:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 71, 171, 0.3);
+  }
+  
+  /* 빈 상태 */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  
+  .empty-icon {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+  }
+  
+  .info-text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #7aa7c7;
+    margin-bottom: 10px;
+  }
+  
+  .info-desc {
+    font-size: 1rem;
+    color: #666;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  /* 반응형 */
+  @media (max-width: 768px) {
+    .match-controls {
+      flex-direction: column;
+    }
+    
+    .employee-header {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .employee-profile {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+    
+    .detail-row {
+      flex-direction: column;
+    }
+    
+    .detail-label {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  }

@@ -1,46 +1,96 @@
 <template>
     <div class="admin-sidebar">
-      <h2>관리자 메뉴</h2>
-      <ul>
-        <li><router-link to="/admin-dashboard">📊 신입 매칭</router-link></li>
-        <li><router-link to="/admin-employees">👥 신입 리스트</router-link></li>
-        <li><router-link to="/admin-settings">⚙️ 시스템 설정</router-link></li>
-      </ul>
+      <!-- 상단: 메뉴 영역 -->
+      <div class="menu-section">
+        <h2>관리자 메뉴</h2>
+        <ul>
+          <li><router-link to="/admin-dashboard">📊 신입 매칭</router-link></li>
+          <li><router-link to="/admin-employees">👥 신입 리스트</router-link></li>
+          <li><router-link to="/admin-settings">⚙️ 시스템 설정</router-link></li>
+        </ul>
+      </div>
+  
+      <!-- 하단: 고정 버튼 -->
+      <div class="footer-section">
+        <button class="footer-button">설정</button>
+        <button class="footer-button">도움말</button>
+        <button class="logout-button" @click="logout">로그아웃</button>
+
+      </div>
     </div>
   </template>
   
-  <script setup></script>
+  <script setup>
+    import { useRouter } from 'vue-router'
+
+    const router = useRouter()
+
+    function logout() {
+        localStorage.clear() // 로그인 상태 초기화
+        router.push('/admin-login') // 로그인 페이지로 이동
+    }
+</script>
+
   
   <style scoped>
-  .admin-sidebar {
-    width: 250px;
-    background-color: #0b2f52;
-    color: white;
-    padding: 20px;
-    height: 100vh;
-  }
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100vh;
+        background-color: #0b2f52;
+        color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
   
-  .admin-sidebar h2 {
+  .menu-section h2 {
     margin-bottom: 20px;
     font-size: 1.2rem;
   }
   
-  .admin-sidebar ul {
+  .menu-section ul {
     list-style: none;
     padding: 0;
   }
   
-  .admin-sidebar li {
+  .menu-section li {
     margin-bottom: 15px;
   }
   
-  .admin-sidebar a {
+  .menu-section a {
     color: white;
     text-decoration: none;
   }
   
-  .admin-sidebar a:hover {
+  .menu-section a:hover {
     text-decoration: underline;
+  }
+  
+  .footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .footer-button,
+  .logout-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 0.95rem;
+    text-align: left;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+  
+  .logout-button {
+    margin-top: 10px;
+    color: #f99;
+    font-weight: bold;
   }
   </style>
   

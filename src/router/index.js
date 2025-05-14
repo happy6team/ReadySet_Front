@@ -5,6 +5,8 @@ import Meeting from '../views/Meeting.vue';
 import ReportView from '../views/ReportView.vue';
 import Startpage from '../views/Startpage.vue';
 import AdminLogin from '../views/AdminLogin.vue';
+import AdminDashboard from '../views/AdminDashboard.vue';
+import AdminEmployees from '../views/AdminEmployees.vue';
 
 
 const routes = [
@@ -37,6 +39,15 @@ const routes = [
     name: 'AdminLogin', 
     component: AdminLogin,
     meta: { hideSidebar: true } 
+  },
+  { path: '/admin-dashboard', 
+    name: 'AdminDashboard', 
+    component: AdminDashboard
+  },
+  {
+    path: '/admin-employees',
+    name: 'AdminEmployees',
+    component: AdminEmployees
   },
 
   // 다른 라우트 설정...

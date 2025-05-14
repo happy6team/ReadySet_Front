@@ -87,6 +87,7 @@ body {
 .app-container {
   display: flex;
   min-height: 100vh;
+  align-items: stretch;
 }
 
 .main-content {
