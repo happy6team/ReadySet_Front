@@ -9,17 +9,19 @@
 
     <div class="match-section">
       <div class="section-header">
-        <h3>부서 선택 및 매칭 🔄</h3>
+        <h3>프로젝트 선택 및 매칭 🔄</h3>
       </div>
 
       <div class="match-controls">
         <select
-          v-model="selectedDepartment"
+          v-model="selectedProject"
           class="department-select"
           :disabled="isLoading"
         >
-          <option disabled value="">부서를 선택하세요</option>
-          <option v-for="dept in departments" :key="dept">{{ dept }}</option>
+          <option disabled value="">프로젝트를 선택하세요</option>
+          <option v-for="project in projects" :key="project">
+            {{ project }}
+          </option>
         </select>
         <button
           @click="matchEmployees"
@@ -50,31 +52,75 @@
             </div>
             <div class="employee-title">
               <h3>{{ currentEmployee.name }}</h3>
-              <span class="employee-badge">{{ currentEmployee.major }}</span>
+              <span class="employee-badge">{{
+                currentEmployee.department
+              }}</span>
+            </div>
+
+            <!-- 직원 상세 정보 버튼 추가 -->
+            <div class="detail-button-container">
+              <button @click="showEmployeeDetail" class="detail-button">
+                상세 정보
+              </button>
             </div>
           </div>
 
           <div class="employee-content">
             <div class="employee-details">
               <div class="detail-row">
-                <div class="detail-label">성격</div>
+                <div class="detail-label">주요 역량</div>
                 <div class="detail-value">
-                  {{ currentEmployee.personality }}
+                  {{ currentEmployee.tech_skills }}
                 </div>
               </div>
               <div class="detail-row">
-                <div class="detail-label">희망 부서</div>
-                <div class="detail-value">{{ currentEmployee.preference }}</div>
+                <div class="detail-label">매칭 점수</div>
+                <div class="detail-value">
+                  {{ currentEmployee.total_score }}/10
+                </div>
               </div>
-              <div class="detail-row">
-                <div class="detail-label">이력서</div>
-                <div class="detail-value">{{ currentEmployee.resume }}</div>
+            </div>
+
+            <div class="score-details">
+              <h4>평가 항목별 점수</h4>
+              <div class="score-grid">
+                <div class="score-item">
+                  <div class="score-label">핵심 기술 일치도</div>
+                  <div class="score-value">
+                    {{ currentEmployee.scores?.tech_match || 0 }}/4.0
+                  </div>
+                </div>
+                <div class="score-item">
+                  <div class="score-label">실무 프로젝트 경험</div>
+                  <div class="score-value">
+                    {{ currentEmployee.scores?.project_experience || 0 }}/2.5
+                  </div>
+                </div>
+                <div class="score-item">
+                  <div class="score-label">자격증 및 전문 역량</div>
+                  <div class="score-value">
+                    {{ currentEmployee.scores?.certifications || 0 }}/2.0
+                  </div>
+                </div>
+                <div class="score-item">
+                  <div class="score-label">경력 적합성</div>
+                  <div class="score-value">
+                    {{ currentEmployee.scores?.career_fit || 0 }}/1.5
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="reason-section">
               <h4>선정 이유</h4>
-              <p>{{ currentEmployee.reason }}</p>
+              <ul class="reason-list">
+                <li
+                  v-for="(reason, index) in currentEmployee.reasons"
+                  :key="index"
+                >
+                  {{ reason }}
+                </li>
+              </ul>
             </div>
 
             <div class="navigation-controls">
@@ -107,11 +153,116 @@
             alt="매칭 시작"
             class="empty-icon"
           />
-          <p class="info-text">부서를 선택하고 매칭을 시작해보세요.</p>
+          <p class="info-text">프로젝트를 선택하고 매칭을 시작해보세요.</p>
           <p class="info-desc">
-            부서 특성과 신입사원의 역량을 고려한 최적의 매칭 결과를 확인할 수
-            있습니다.
+            프로젝트 특성과 신입사원의 역량을 고려한 최적의 매칭 결과를 확인할
+            수 있습니다.
           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 직원 상세 정보 모달 -->
+    <div class="modal" v-if="showModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>신입사원 상세 정보</h2>
+          <button @click="closeModal" class="close-button">&times;</button>
+        </div>
+        <div class="modal-body" v-if="employeeDetail">
+          <div class="resume-container">
+            <div class="resume-header">
+              <div class="resume-profile">
+                <div class="profile-initial-large">
+                  {{ getInitial(employeeDetail.name) }}
+                </div>
+              </div>
+              <div class="resume-title">
+                <h2>{{ employeeDetail.name }}</h2>
+                <div class="resume-position">
+                  <span class="position-badge">{{
+                    employeeDetail.position
+                  }}</span>
+                  <span class="department-badge">{{
+                    employeeDetail.department
+                  }}</span>
+                </div>
+                <p class="profile-summary">
+                  {{ employeeDetail.profile_summary }}
+                </p>
+              </div>
+            </div>
+
+            <div class="resume-sections">
+              <div class="resume-section">
+                <h3>기본 정보</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <div class="info-label">사번</div>
+                    <div class="info-value">{{ employeeDetail.id }}</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">입사일</div>
+                    <div class="info-value">
+                      {{ formatDate(employeeDetail.join_date) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="resume-section">
+                <h3>보유 기술</h3>
+                <div class="skills-container">
+                  <span
+                    v-for="skill in employeeDetail.skills"
+                    :key="skill"
+                    class="skill-badge"
+                  >
+                    {{ skill }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="resume-section">
+                <h3>프로젝트 이력</h3>
+                <ul class="project-list">
+                  <li v-for="project in employeeDetail.projects" :key="project">
+                    {{ project }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="resume-section">
+                <h3>학력</h3>
+                <div class="education-info">
+                  <p>
+                    <strong>{{ employeeDetail.education_school }}</strong
+                    >,
+                    {{ employeeDetail.education_degree }}
+                    ({{ employeeDetail.education_graduation_year }}년 졸업)
+                  </p>
+                </div>
+              </div>
+
+              <div class="resume-section">
+                <h3>자격증</h3>
+                <ul class="certification-list">
+                  <li v-for="cert in employeeDetail.certifications" :key="cert">
+                    {{ cert }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="resume-section">
+                <h3>언어 능력</h3>
+                <ul class="language-list">
+                  <li v-for="lang in employeeDetail.languages" :key="lang">
+                    {{ lang }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -125,12 +276,11 @@ import axios from "axios";
 
 const isLoading = ref(false);
 
-// 부서 목록
-const departments = ref([]);
-//const departments = ['데이터 분석팀', 'AI 개발팀', '백엔드 팀', '프론트엔드 팀', '스마트팜 운영팀', 'IoT 센서팀']
+// 프로젝트 목록
+const projects = ref([]);
 
-// 선택된 부서
-const selectedDepartment = ref("");
+// 선택된 프로젝트
+const selectedProject = ref("");
 
 // 매칭된 신입사원 목록
 const matchedEmployees = ref([]);
@@ -143,187 +293,108 @@ const currentEmployee = computed(
   () => matchedEmployees.value[currentIndex.value] || {}
 );
 
+// 프로젝트 정보
+const projectInfo = ref(null);
+
+// 모달 상태
+const showModal = ref(false);
+
+// 직원 상세 정보
+const employeeDetail = ref(null);
+
 // 이름에서 첫 글자 가져오기 (프로필 이니셜용)
 function getInitial(name) {
   return name ? name.charAt(0) : "";
 }
 
-// 부서 목록 가져오기
-async function fetchDepartments() {
-  console.log("호출을 하긴하는거지");
+// 날짜 포맷팅
+function formatDate(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}년 ${month}월 ${day}일`;
+}
+
+// 프로젝트 목록 가져오기
+async function fetchProjects() {
+  console.log("프로젝트 목록 가져오기 시작");
   isLoading.value = true;
   try {
     const response = await axios.get("http://localhost:8000/hr/projects");
     if (response.data && response.data.projects) {
-      departments.value = response.data.projects;
+      projects.value = response.data.projects;
     } else {
       console.error("API 응답 형식이 다릅니다:", response.data);
-      // 기본 부서 목록 (API 실패 시 폴백)
-      departments.value = [
-        "데이터 분석팀",
-        "AI 개발팀",
-        "백엔드 팀",
-        "프론트엔드 팀",
-        "스마트팜 운영팀",
-        "IoT 센서팀",
+      // 기본 프로젝트 목록 (API 실패 시 폴백)
+      projects.value = [
+        "신규 사업 전략 수립 프로젝트",
+        "웹 애플리케이션 개발",
+        "모바일 앱 개발",
+        "데이터 파이프라인 구축",
+        "AI 모델 개발",
+        "클라우드 인프라 구축",
       ];
     }
   } catch (error) {
-    console.error("부서 목록을 가져오는 중 오류 발생:", error);
-    // 기본 부서 목록 (API 실패 시 폴백)
-    departments.value = [
-      "데이터 분석팀",
-      "AI 개발팀",
-      "백엔드 팀",
-      "프론트엔드 팀",
-      "스마트팜 운영팀",
-      "IoT 센서팀",
+    console.error("프로젝트 목록을 가져오는 중 오류 발생:", error);
+    // 기본 프로젝트 목록 (API 실패 시 폴백)
+    projects.value = [
+      "신규 사업 전략 수립 프로젝트",
+      "웹 애플리케이션 개발",
+      "모바일 앱 개발",
+      "데이터 파이프라인 구축",
+      "AI 모델 개발",
+      "클라우드 인프라 구축",
     ];
   } finally {
     isLoading.value = false;
   }
 }
 
-function matchEmployees() {
-  if (!selectedDepartment.value) {
-    alert("부서를 선택해주세요!");
+// 신입사원 매칭 API 호출
+async function matchEmployees() {
+  if (!selectedProject.value) {
+    alert("프로젝트를 선택해주세요!");
     return;
   }
 
-  // 더미 데이터 - 실제로는 API 호출로 대체될 예정
-  const dummyData = {
-    "AI 개발팀": [
-      {
-        name: "김다은",
-        major: "컴퓨터공학",
-        personality: "성실하고 꼼꼼함, 새로운 기술에 대한 호기심이 많음",
-        preference: "AI 개발팀",
-        resume: "딥러닝 프로젝트 3건, 자연어 처리 연구 경험",
-        reason:
-          "딥러닝 프로젝트 경험이 풍부하고 희망 부서와 일치함. 꼼꼼한 성격으로 AI 모델 검증에 적합함.",
-      },
-      {
-        name: "박준호",
-        major: "인공지능학",
-        personality: "창의적이고 도전적인 문제 해결을 즐김",
-        preference: "AI 개발팀",
-        resume: "컴퓨터 비전 관련 논문 발표, 스마트 농업 AI 프로젝트 참여",
-        reason:
-          "스마트팜 관련 AI 프로젝트 경험이 있어 도메인 이해도가 높고, 연구 역량이 뛰어남.",
-      },
-      {
-        name: "이소현",
-        major: "데이터사이언스",
-        personality: "분석적이고 논리적인 사고, 팀워크 중시",
-        preference: "데이터 분석팀",
-        resume: "머신러닝 모델 개발 경험, 데이터 시각화 프로젝트 다수",
-        reason:
-          "AI 모델 개발과 데이터 처리 능력이 뛰어나 생육 환경 최적화 알고리즘 개발에 적합함.",
-      },
-    ],
-    "데이터 분석팀": [
-      {
-        name: "이재웅",
-        major: "산업공학",
-        personality: "분석적 사고가 뛰어나며 체계적인 문제 해결 능력",
-        preference: "데이터 분석팀",
-        resume: "대용량 공정 데이터 분석 경험, 통계 모델링 프로젝트",
-        reason:
-          "공정 데이터 분석 경험이 있어 스마트팜 데이터 분석에 바로 투입 가능함.",
-      },
-      {
-        name: "최유진",
-        major: "통계학",
-        personality: "꼼꼼하고 끈기 있는 태도, 데이터 시각화에 관심이 많음",
-        preference: "데이터 분석팀",
-        resume: "농업 데이터 분석 인턴, R과 Python 활용 능력 우수",
-        reason:
-          "농업 데이터 분석 경험이 있어 도메인 지식이 있으며, 뛰어난 통계 역량 보유.",
-      },
-    ],
-    "백엔드 팀": [
-      {
-        name: "홍길동",
-        major: "소프트웨어공학",
-        personality: "논리적이고 문제해결 지향적",
-        preference: "백엔드 팀",
-        resume: "Spring Boot 기반 API 개발, MSA 아키텍처 설계 경험",
-        reason:
-          "백엔드 개발 경험이 풍부하며 MSA 아키텍처 지식이 있어 확장 가능한 시스템 구축에 적합함.",
-      },
-      {
-        name: "정민우",
-        major: "컴퓨터공학",
-        personality: "책임감이 강하고 꼼꼼함",
-        preference: "프론트엔드 팀",
-        resume: "Node.js, MongoDB, AWS 활용한 서버 구축 경험",
-        reason:
-          "클라우드 서비스 경험이 있어 스마트팜 시스템의 안정적인 운영에 기여할 수 있음.",
-      },
-    ],
-    "프론트엔드 팀": [
-      {
-        name: "김지은",
-        major: "시각디자인",
-        personality: "창의적이고 사용자 중심적 사고",
-        preference: "프론트엔드 팀",
-        resume: "Vue.js, React 프레임워크 활용한 대시보드 개발 경험",
-        reason: "대시보드 개발 경험이 있어 스마트팜 모니터링 UI 개발에 적합함.",
-      },
-      {
-        name: "이태영",
-        major: "컴퓨터공학",
-        personality: "세심하고 디테일 지향적",
-        preference: "프론트엔드 팀",
-        resume: "UX/UI 디자인 경험, JavaScript 프레임워크 능숙",
-        reason:
-          "UX 디자인 경험으로 사용자 친화적인 인터페이스 개발에 기여할 수 있음.",
-      },
-    ],
-    "스마트팜 운영팀": [
-      {
-        name: "송미라",
-        major: "농업생명공학",
-        personality: "책임감이 강하고 현장 중심적 사고",
-        preference: "스마트팜 운영팀",
-        resume: "스마트팜 인턴십, 식물 생육 모니터링 연구",
-        reason: "농업 도메인 지식과 스마트팜 경험을 갖춰 운영 최적화에 적합함.",
-      },
-      {
-        name: "강동훈",
-        major: "환경공학",
-        personality: "실용적이고 문제 해결 능력이 뛰어남",
-        preference: "IoT 센서팀",
-        resume: "환경 센서 네트워크 구축 프로젝트 참여",
-        reason:
-          "환경 센서 경험이 있어 스마트팜 운영에 필요한 데이터 수집 체계 구축에 도움이 됨.",
-      },
-    ],
-    "IoT 센서팀": [
-      {
-        name: "박상현",
-        major: "전자공학",
-        personality: "기술적 호기심이 많고 꼼꼼함",
-        preference: "IoT 센서팀",
-        resume: "아두이노 기반 센서 네트워크 개발, LoRa 통신 활용 프로젝트",
-        reason:
-          "센서 네트워크 개발 경험이 있어 스마트팜 센서 시스템 구축에 즉시 기여 가능함.",
-      },
-      {
-        name: "임정훈",
-        major: "임베디드시스템",
-        personality: "분석적이고 효율성 중시",
-        preference: "IoT 센서팀",
-        resume: "저전력 센서 네트워크 설계, 원격 모니터링 시스템 개발",
-        reason:
-          "저전력 센서 네트워크 설계 경험으로 효율적인 모니터링 시스템 구축에 적합함.",
-      },
-    ],
-  };
+  isLoading.value = true;
+  try {
+    // API 요청 데이터
+    const requestData = {
+      project_name: selectedProject.value,
+      top_n: 3,
+    };
 
-  // 선택한 부서에 맞는 신입사원 목록 가져오기
-  matchedEmployees.value = dummyData[selectedDepartment.value] || [];
-  currentIndex.value = 0;
+    console.log("매칭 요청 데이터:", requestData);
+
+    // API 호출
+    const response = await axios.post(
+      "http://localhost:8000/hr/project-matching",
+      requestData
+    );
+    console.log("매칭 응답:", response.data);
+
+    // 응답 데이터 처리
+    if (response.data) {
+      projectInfo.value = response.data.project_info;
+      matchedEmployees.value = response.data.candidates || [];
+      currentIndex.value = 0;
+    } else {
+      alert("매칭 결과를 가져오는데 실패했습니다.");
+      matchedEmployees.value = [];
+    }
+  } catch (error) {
+    console.error("신입사원 매칭 중 오류 발생:", error);
+    alert("매칭 과정에서 오류가 발생했습니다.");
+    matchedEmployees.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 function nextEmployee() {
@@ -334,14 +405,319 @@ function nextEmployee() {
   }
 }
 
+// 직원 상세 정보 가져오기
+async function showEmployeeDetail() {
+  if (!currentEmployee.value || !currentEmployee.value.id) {
+    alert("직원 정보를 찾을 수 없습니다.");
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    // 직원 ID로 상세 정보 가져오기
+    const response = await axios.get(
+      `http://localhost:8000/hr/${currentEmployee.value.id}`
+    );
+
+    employeeDetail.value = response.data;
+    showModal.value = true;
+  } catch (error) {
+    console.error("직원 상세 정보를 가져오는 중 오류 발생:", error);
+    showModal.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+// 모달 닫기
+function closeModal() {
+  showModal.value = false;
+}
+
 function prevEmployee() {
   if (currentIndex.value > 0) {
     currentIndex.value -= 1;
   }
 }
 
-// 컴포넌트 마운트 시 부서 목록 가져오기
+// 컴포넌트 마운트 시 프로젝트 목록 가져오기
 onMounted(() => {
-  fetchDepartments();
+  fetchProjects();
 });
 </script>
+
+<style scoped>
+/* 기존 스타일 유지 */
+
+/* 점수 세부 정보 스타일 */
+.score-details {
+  margin: 20px 0;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.score-details h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.score-label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.score-value {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+/* 이유 목록 스타일 */
+.reason-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.reason-list li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* 상세 정보 버튼 스타일 */
+.detail-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+
+.detail-button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-button:hover {
+  background-color: #1976d2;
+}
+
+/* 모달 스타일 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* 이력서 스타일 */
+.resume-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.resume-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.profile-initial-large {
+  width: 80px;
+  height: 80px;
+  background-color: #1976d2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+.resume-title h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.resume-position {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.position-badge,
+.department-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.position-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.department-badge {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.profile-summary {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.resume-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.resume-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.resume-section h3 {
+  margin: 0 0 16px 0;
+  color: #1976d2;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+}
+
+.project-list,
+.certification-list,
+.language-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.project-list li,
+.certification-list li,
+.language-list li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.education-info {
+  margin: 0;
+}
+
+.education-info p {
+  margin: 0;
+  line-height: 1.5;
+}
+</style>
